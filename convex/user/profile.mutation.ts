@@ -1,20 +1,25 @@
 'use strict'
 
-import type { MutationCtx } from './_generated/server'
+import type { MutationCtx, QueryCtx } from '../_generated/server'
 import { v } from 'convex/values'
-import { mutation, query } from './_generated/server'
+import { mutation, query } from '../_generated/server'
+import { getByUserIdHandler, saveHandler } from '../profile.funcs'
 
-const DEFAULT_VERSION = 1
+export const getByUserId = query({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }) => {
+    return await getByUserIdHandler(ctx as QueryCtx, userId)
+  },
+})
 
-function requireOwnership(ctx: MutationCtx, userId: string) {
-  return ctx.auth.getUserIdentity().then((identity) => {
-    if (!identity) throw new Error('Authentication required')
-    if (identity.subject !== userId) {
-      throw new Error('You do not have permission to modify this profile')
-    }
-  })
-}
-
-type StoredProfileDoc = {
-  _id: string
-  // MOVED: use ../profile.mutation.ts
+export const save = mutation({
+  args: {
+    userId: v.string(),
+    encryptedPayload: v.string(),
+    iv: v.string(),
+    version: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    return await saveHandler(ctx as MutationCtx, args)
+  },
+})
