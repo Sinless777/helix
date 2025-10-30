@@ -1,5 +1,6 @@
 'use client'
 
+import { DevelopmentBanner } from '@/components/development-banner'
 import Header from '@/components/Header'
 import { HeroSection } from '@/components/Waitlist'
 import { headerProps } from '@/content/header'
@@ -28,6 +29,7 @@ export default function Index() {
 
       {/* Fixed gradient header */}
       <Header {...headerProps} pages={[...headerProps.pages]} />
+      <DevelopmentBanner sx={{ mb: 2 }} />
 
       {/* Page content */}
       <main id="main" className="pt-20 sm:pt-24 md:pt-28 lg:pt-32 xl:pt-32">

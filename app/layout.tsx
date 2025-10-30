@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Inter, Pinyon_Script, Lora } from 'next/font/google'
 import { getClerkAppearance } from '@/components/theme'
 import MuiAppTheme from '@/components/MuiAppTheme'
+import { DevelopmentBanner } from '@/components/development-banner'
 
 const pinyon = Pinyon_Script({
   weight: '400',
