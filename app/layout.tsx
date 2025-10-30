@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils'
 import { Inter, Pinyon_Script, Lora } from 'next/font/google'
 import { getClerkAppearance } from '@/components/theme'
 import MuiAppTheme from '@/components/MuiAppTheme'
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from '@vercel/analytics/next'
+import Script from 'next/script'
 
 const pinyon = Pinyon_Script({
   weight: '400',
@@ -35,7 +35,15 @@ export const metadata: Metadata = {
   title: { default: 'Helix AI', template: '%s | Helix AI' },
   description:
     'Helix AI is your adaptive digital companion — connect, automate, and analyze across your ecosystem.',
-  keywords: ['Helix AI', 'AI assistant', 'automation', 'productivity', 'Convex', 'Clerk', 'Next.js'],
+  keywords: [
+    'Helix AI',
+    'AI assistant',
+    'automation',
+    'productivity',
+    'Convex',
+    'Clerk',
+    'Next.js',
+  ],
   applicationName: 'Helix AI',
   authors: [{ name: 'SinLess Games LLC', url: 'https://sinlessgamesllc.com' }],
   creator: 'SinLess Games LLC',
@@ -48,7 +56,14 @@ export const metadata: Metadata = {
       'Your adaptive digital companion — connect, automate, and analyze across your ecosystem.',
     url: 'https://helixai.com',
     siteName: 'Helix AI',
-    images: [{ url: 'https://cdn.sinlessgamesllc.com/Helix-AI/images/Helix_OG.png', width: 1200, height: 630, alt: 'Helix AI' }],
+    images: [
+      {
+        url: 'https://cdn.sinlessgamesllc.com/Helix-AI/images/Helix_OG.png',
+        width: 1200,
+        height: 630,
+        alt: 'Helix AI',
+      },
+    ],
     locale: 'en_US',
     type: 'website',
   },
@@ -74,18 +89,20 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  colorScheme: 'dark light',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#000000' },
   ],
-  colorScheme: 'dark light',
-  width: 'device-width',
-  initialScale: 1,
 }
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  // For now your site is dark-only. If you later add toggling, keep this
-  // html setup and swap the class/style before hydration.
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const mode: 'dark' | 'light' = 'dark'
   const clerkAppearance = getClerkAppearance(mode)
 
@@ -93,18 +110,36 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <ClerkProvider appearance={clerkAppearance}>
       <html
         lang="en"
-        className={`${inter.variable} ${lora.variable} ${pinyon.variable} ${mode === 'dark' ? 'dark' : ''}`}
+        className={`${inter.variable} ${lora.variable} ${pinyon.variable} ${
+          mode === 'dark' ? 'dark' : ''
+        }`}
         style={{ colorScheme: mode }}
         suppressHydrationWarning
       >
         <head>
-          <meta name="google-adsense-account" content="ca-pub-9610840170359196"></meta>
+          {/* AdSense Meta Tag */}
+          <meta
+            name="google-adsense-account"
+            content="ca-pub-9610840170359196"
+          />
+
+          {/* Google Analytics / GTM */}
+          <Script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-EXCL6FMDHY"
+          />
+          <Script id="gtag-init" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){window.dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-EXCL6FMDHY');
+            `}
+          </Script>
         </head>
-        <SpeedInsights />
-        <Analytics />
-        <MuiAppTheme>
-          {/* CssBaseline is applied inside MuiAppTheme */}
-          <body className={cn('antialiased', 'bg-black text-white')}>
+        <body className={cn('antialiased', 'bg-black text-white')}>
+          <Analytics />
+          <MuiAppTheme>
             <Providers>
               <BackgroundImage
                 imageUrl="https://cdn.sinlessgamesllc.com/Helix-AI/images/Background.webp"
@@ -113,8 +148,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 {children}
               </BackgroundImage>
             </Providers>
-          </body>
-        </MuiAppTheme>
+          </MuiAppTheme>
+        </body>
       </html>
     </ClerkProvider>
   )
