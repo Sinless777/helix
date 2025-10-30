@@ -1,81 +1,110 @@
 // app/[user-id]/page.tsx
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import Header from '@/components/Header'
-import { headerProps } from '@/content/header'
-import { getUserData } from '@/lib/users/users'
-import { getProfile } from '@/lib/users/profile'
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Box } from "@mui/material";
 
-type PageProps = {
-  // In Next 15/16, params is a Promise in Server Components
-  params: Promise<{ 'user-id': string }>
-}
+import { auth } from "@clerk/nextjs/server";
+import { getUserData } from "@/lib/users/users";
+import { getProfile } from "@/lib/users/profile";
+import { ProfileLayout } from "@/components/users/Profile/wrapper";
+import Header from "@/components/Header";
+import { headerProps } from "@/content/header";
+import ProfileDetails from "@/components/users/Profile/ProfileDetails";
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { 'user-id': userParam } = await params
-  const user = await getUserData(userParam)
+type PageParams = { "user-id": string };
+type PageProps = { params: Promise<PageParams> };
 
-  const title = user ? `${user.name} (@${user.username ?? user.id})` : 'User'
+// --- Metadata ---
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const resolved = await props.params?.catch?.(() => undefined);
+  const userId = resolved?.["user-id"];
+
+  if (!userId)
+    return { title: "User", description: "User profile on Helix AI" };
+
+  const user = await getUserData(userId);
+  const title = user ? `${user.name} (@${user.username ?? user.id})` : "User";
   const desc =
-    user?.about ||
-    `View ${user?.name ?? userParam}'s profile on Helix AI.`
+    user?.about || `View ${user?.name ?? userId}'s profile on Helix AI.`;
 
   return {
     title,
     description: desc,
-    openGraph: {
-      title,
-      description: desc,
-      type: 'profile',
-    },
-    twitter: {
-      card: 'summary',
-      title,
-      description: desc,
-    },
-  }
+    openGraph: { title, description: desc, type: "profile" },
+    twitter: { card: "summary", title, description: desc },
+  };
 }
 
-export default async function AboutUserPage({ params }: PageProps) {
-  const { 'user-id': userParam } = await params
-  const user = await getUserData(userParam)
+// --- Page ---
+export default async function AboutUserPage(props: PageProps) {
+  // Safely unwrap params (Next 16 passes a Promise)
+  const resolved = await props.params?.catch?.(() => undefined);
+  const userId = resolved?.["user-id"];
 
-  if (!user) {
-    // Proper 404 if user does not exist
-    notFound()
-  }
+  if (!userId) notFound();
+
+  const [authResult, user] = await Promise.all([
+    auth().catch(() => ({ userId: null })),
+    getUserData(userId),
+  ]);
+  if (!user) notFound();
+
+  const profile = user.profile ?? (await getProfile(user.id));
+  if (!profile) notFound();
+
+  const avatarUrl = user.avatarUrl;
+
+  const viewerId = authResult?.userId ?? null;
+  const isAuthenticated = viewerId !== null;
+  const canEdit = viewerId === user.id;
+
+  const layoutName = [profile?.firstName, profile?.middleName, profile?.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim() || user.name;
+
+  const layoutUser =
+    avatarUrl !== undefined
+      ? { name: layoutName, avatarUrl }
+      : { name: layoutName };
 
   return (
-    <main>
+    <Box>
       <Header {...headerProps} pages={[...headerProps.pages]} />
-
-      <section
-        style={{
-          paddingTop: '5rem',
-          paddingBottom: '2rem',
-          maxWidth: 960,
-          margin: '0 auto',
-          paddingInline: '1rem',
-          textAlign: 'center',
-        }}
-      >
-        <h1 style={{ marginBottom: '0.25rem' }}>{user.name}</h1>
-        {user.username && (
-          <p style={{ opacity: 0.8, margin: 0 }}>@{user.username}</p>
-        )}
-        {user.createdAt && (
-          <p style={{ opacity: 0.6, marginTop: '0.5rem' }}>
-            Joined {new Date(user.createdAt).toLocaleDateString()}
-          </p>
-        )}
-
-        {user.about && (
-          <p style={{ marginTop: '1rem', lineHeight: 1.6 }}>{user.about}</p>
-        )}
-        {user.bio && !user.about && (
-          <p style={{ marginTop: '1rem', lineHeight: 1.6 }}>{user.bio}</p>
-        )}
-      </section>
-    </main>
-  )
+      <ProfileLayout user={layoutUser}>
+        <Box sx={{ pt: 2, pb: 4, display: "flex", justifyContent: "center" }}>
+          <ProfileDetails
+            user={{
+              id: user.id,
+              name: layoutName,
+              username: user.username ?? null,
+              avatarUrl: avatarUrl ?? null,
+              createdAt: user.createdAt ?? null,
+              bio: user.bio ?? null,
+              about: user.about ?? null,
+            }}
+            profile={{
+              userId: profile.userId,
+              firstName: profile.firstName ?? null,
+              middleName: profile.middleName ?? null,
+              lastName: profile.lastName ?? null,
+              gender: profile.gender ?? null,
+              sex: profile.sex ?? null,
+              sexuality: profile.sexuality ?? null,
+              genderCustom: profile.genderCustom ?? null,
+              sexCustom: profile.sexCustom ?? null,
+              sexualityCustom: profile.sexualityCustom ?? null,
+              bio: profile.bio ?? null,
+              profession: profile.profession ?? null,
+              gradeLevel: profile.gradeLevel ?? null,
+              country: profile.country ?? null,
+              mailingAddress: profile.mailingAddress ?? null,
+            }}
+            canEdit={canEdit}
+            isAuthenticated={isAuthenticated}
+          />
+        </Box>
+      </ProfileLayout>
+    </Box>
+  );
 }

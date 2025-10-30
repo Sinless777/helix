@@ -1,7 +1,8 @@
 // app/api/V1/[user-id]/profile/route.ts
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { ConvexHttpClient } from 'convex/browser'
 import { api } from '@/convex/_generated/api' // If you don't use "@/*" alias, change to a relative path.
+import { encryptJson } from '@/lib/security/encrypt.util'
 
 // IMPORTANT: Convex URL must be set (e.g., NEXT_PUBLIC_CONVEX_URL=https://*.convex.cloud)
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL
@@ -11,13 +12,15 @@ if (!convexUrl) {
 }
 
 const client = new ConvexHttpClient(convexUrl)
+const profileApi = (api as any).profile
 
 export async function GET(
-  _req: Request,
-  ctx: { params: { 'user-id'?: string } }
+  _req: NextRequest,
+  ctx: { params: Promise<{ 'user-id': string }> }
 ) {
   try {
-    const userId = ctx.params['user-id']
+    const params = await ctx.params
+    const userId = params['user-id']
     if (!userId || typeof userId !== 'string') {
       return NextResponse.json(
         { error: 'Missing required route param: user-id' },
@@ -25,7 +28,7 @@ export async function GET(
       )
     }
 
-    const profile = await client.query(api.profile.getByUserId, { userId })
+    const profile = await client.query(profileApi.getByUserId, { userId })
 
     if (!profile) {
       return NextResponse.json(

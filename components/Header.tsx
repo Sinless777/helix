@@ -2,9 +2,8 @@
 'use client'
 
 import * as React from 'react'
-import NextLink from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import DashboardIcon from '@mui/icons-material/Dashboard'
@@ -33,8 +32,7 @@ import { useTheme } from '@mui/material/styles'
 import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs'
 import { SignInButton } from '@/components/SignInButton'
 import { SignUpButton } from '@/components/SignUpButton'
-import { getUserPage, UserPages } from '@/content/constants/user.pages'
-
+import { getUserPage } from '@/content/constants/user.pages'
 import styles from './Header.module.scss'
 
 export interface Page { name: string; url: string }
@@ -49,10 +47,11 @@ export interface HeaderProps {
 export default function Header({ logo, version, pages, style }: HeaderProps) {
   const [menuOpen, setMenuOpen] = React.useState(false)
   const [latestVersion, setLatestVersion] = React.useState<string | null>(null)
-  const [accountAnchor, setAccountAnchor] = React.useState<null | HTMLElement>(null)
+  const [accountAnchor, setAccountAnchor] = React.useState<HTMLElement | null>(null)
 
   const { user, isSignedIn } = useUser()
   const pathname = usePathname()
+  const router = useRouter()
   const theme = useTheme()
   const mdUp = useMediaQuery(theme.breakpoints.up('md'))
 
@@ -84,6 +83,13 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
   const displayVersion = latestVersion ?? version
   const releaseUrl = `https://github.com/Sinless777/Helix/releases/tag/v${displayVersion}`
 
+  // Small helpers for internal navigation (no next/link typing involved)
+  const go = (href: string) => router.push(href as unknown as any)
+  const goAndClose = (href: string) => {
+    setMenuOpen(false)
+    router.push(href as unknown as any)
+  }
+
   return (
     <>
       <Box component="header" className={styles.header} style={style}>
@@ -101,10 +107,17 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
         >
           {/* Left: Logo + Version */}
           <Stack direction="row" spacing={2}>
-            <MuiLink underline="none" sx={{ display: 'inline-flex', alignItems: 'center' }}>
+            {/* Logo behaves as button; routes with router.push('/') */}
+            <Box
+              role="link"
+              aria-label="Helix Home"
+              onClick={() => go('/')}
+              sx={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+            >
               <Image src={logo} alt="Helix logo" width={120} height={40} priority />
-            </MuiLink>
+            </Box>
 
+            {/* External link can remain a real anchor */}
             <MuiLink
               href={releaseUrl}
               target="_blank"
@@ -140,19 +153,21 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
               {pages.map((p) => {
                 const active = pathname === p.url
                 return (
-                  <MuiLink
+                  <Button
                     key={p.name}
-                    href={p.url as any}
-                    underline="none"
+                    onClick={() => go(p.url)}
                     sx={{
                       color: 'inherit',
                       fontWeight: active ? 700 : 500,
                       textDecorationThickness: active ? '2px' : undefined,
                       whiteSpace: 'nowrap',
+                      textTransform: 'none',
+                      px: 1,
+                      minWidth: 0,
                     }}
                   >
                     {p.name}
-                  </MuiLink>
+                  </Button>
                 )
               })}
             </Stack>
@@ -170,9 +185,8 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
                 </SignedOut>
 
                 <SignedIn>
-                  {/* User avatar from Clerk */}
                   <UserButton afterSignOutUrl="/" />
-                  {/* Account dropdown driven by userSlug + getUserPage */}
+
                   {isSignedIn && userSlug && (
                     <>
                       <Button
@@ -186,6 +200,7 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
                       >
                         Account
                       </Button>
+
                       <Menu
                         id="account-menu"
                         anchorEl={accountAnchor}
@@ -195,27 +210,11 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                       >
-                        {/* Account dropdown items */}
-                        <NextLink href={getUserPage('profile', userSlug) as any} passHref legacyBehavior>
-                          <MenuItem component="a" onClick={closeAccountMenu}>
-                            <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
-                            Profile
-                          </MenuItem>
-                        </NextLink>
-
-                        <NextLink href={getUserPage('dashboard', userSlug) as any} passHref legacyBehavior>
-                          <MenuItem component="a" onClick={closeAccountMenu}>
-                            <ListItemIcon><DashboardIcon fontSize="small" /></ListItemIcon>
-                            Dashboard
-                          </MenuItem>
-                        </NextLink>
-
-                        <NextLink href={getUserPage('settings', userSlug) as any} passHref legacyBehavior>
-                          <MenuItem component="a" onClick={closeAccountMenu}>
-                            <ListItemIcon><SettingsIcon fontSize="small" /></ListItemIcon>
-                            Settings
-                          </MenuItem>
-                        </NextLink>
+                        {/* Programmatic navigation (no typed next/link inside MUI) */}
+                        <MenuItem onClick={() => go(getUserPage('profile', userSlug))}>
+                          <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
+                          Profile
+                        </MenuItem>
                       </Menu>
                     </>
                   )}
@@ -249,15 +248,13 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
             const active = pathname === p.url
             return (
               <ListItem key={p.name} disablePadding>
-                <NextLink href={p.url as any} passHref>
-                  <ListItemButton
-                    onClick={() => setMenuOpen(false)}
-                    selected={active}
-                    sx={{ color: 'inherit', '&.Mui-selected': { bgcolor: 'rgba(255,255,255,.08)' } }}
-                  >
-                    <ListItemText primary={p.name} />
-                  </ListItemButton>
-                </NextLink>
+                <ListItemButton
+                  onClick={() => goAndClose(p.url)}
+                  selected={active}
+                  sx={{ color: 'inherit', '&.Mui-selected': { bgcolor: 'rgba(255,255,255,.08)' } }}
+                >
+                  <ListItemText primary={p.name} />
+                </ListItemButton>
               </ListItem>
             )
           })}
@@ -267,26 +264,24 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
             {isSignedIn && userSlug && (
               <>
                 <Divider sx={{ my: 1.5, opacity: 0.2 }} />
-                <NextLink href={getUserPage('profile', userSlug) as any} passHref legacyBehavior>
-                  <ListItemButton component="a" onClick={() => setMenuOpen(false)}>
+                <ListItem disablePadding>
+                  <ListItemButton onClick={() => goAndClose(getUserPage('profile', userSlug))}>
                     <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}><PersonIcon /></ListItemIcon>
                     <ListItemText primary="Profile" />
                   </ListItemButton>
-                </NextLink>
-
-                <NextLink href={getUserPage('dashboard', userSlug) as any} passHref legacyBehavior>
-                  <ListItemButton component="a" onClick={() => setMenuOpen(false)}>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton onClick={() => goAndClose(getUserPage('dashboard', userSlug))}>
                     <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}><DashboardIcon /></ListItemIcon>
                     <ListItemText primary="Dashboard" />
                   </ListItemButton>
-                </NextLink>
-
-                <NextLink href={getUserPage('settings', userSlug) as any} passHref legacyBehavior>
-                  <ListItemButton component="a" onClick={() => setMenuOpen(false)}>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton onClick={() => goAndClose(getUserPage('settings', userSlug))}>
                     <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}><SettingsIcon /></ListItemIcon>
                     <ListItemText primary="Settings" />
                   </ListItemButton>
-                </NextLink>
+                </ListItem>
               </>
             )}
           </SignedIn>

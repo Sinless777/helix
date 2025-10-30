@@ -1,5 +1,6 @@
 // lib/users.ts
 import { clerkClient } from '@clerk/nextjs/server'
+import { getProfile } from '@/lib/users/profile'
 
 export interface UserData {
   id: string
@@ -9,6 +10,8 @@ export interface UserData {
   bio?: string
   about?: string
   createdAt?: string
+  profileId?: string
+  profile?: Awaited<ReturnType<typeof getProfile>>
 }
 
 /**
@@ -22,7 +25,7 @@ export async function getUserData(userIdOrSlug: string): Promise<UserData | null
   // 1) Try by ID
   try {
     const u = await client.users.getUser(userIdOrSlug)
-    if (u) return mapUser(u)
+    if (u) return await attachProfile(mapUser(u))
   } catch (e: any) {
     // If it's a 404 from Clerk, we'll fall through to username lookup
     if (Number(e?.status) !== 404) {
@@ -34,12 +37,28 @@ export async function getUserData(userIdOrSlug: string): Promise<UserData | null
   try {
     const list = await client.users.getUserList({ username: [userIdOrSlug], limit: 1 })
     const u = list?.data?.[0]
-    if (u) return mapUser(u)
+    if (u) return await attachProfile(mapUser(u))
   } catch (e) {
     console.error('getUserData (username) error:', e)
   }
 
   return null
+}
+
+async function attachProfile(user: UserData): Promise<UserData> {
+  try {
+    const profileRecord = await getProfile(user.id)
+    if (profileRecord && typeof profileRecord === 'object' && '_id' in profileRecord) {
+      return {
+        ...user,
+        profileId: (profileRecord as any)._id,
+        profile: profileRecord,
+      }
+    }
+  } catch (error) {
+    console.error('getUserData (profile) error:', error)
+  }
+  return user
 }
 
 function mapUser(u: any): UserData {
