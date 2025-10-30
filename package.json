@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "pnpx convex deploy --cmd next build",
+    "build": "npx convex deploy --cmd 'npm run build'",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
