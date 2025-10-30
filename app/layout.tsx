@@ -8,7 +8,8 @@ import { cn } from '@/lib/utils'
 import { Inter, Pinyon_Script, Lora } from 'next/font/google'
 import { getClerkAppearance } from '@/components/theme'
 import MuiAppTheme from '@/components/MuiAppTheme'
-import { DevelopmentBanner } from '@/components/development-banner'
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 
 const pinyon = Pinyon_Script({
   weight: '400',
@@ -96,6 +97,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         style={{ colorScheme: mode }}
         suppressHydrationWarning
       >
+        <SpeedInsights />
+        <Analytics />
         <MuiAppTheme>
           {/* CssBaseline is applied inside MuiAppTheme */}
           <body className={cn('antialiased', 'bg-black text-white')}>
