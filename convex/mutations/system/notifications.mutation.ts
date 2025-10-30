@@ -1,6 +1,8 @@
-import { mutation } from "../_generated/server"
+import { mutation } from "../../_generated/server"
 import { v } from "convex/values"
-// --- moved notification handlers ---
+
+export { listUnreadNotifications, listReadNotifications, listAllNotifications } from "../../queries/system/notification.query"
+
 /** Create a new notification for the given user. */
 export const createNotification = mutation({
   args: {

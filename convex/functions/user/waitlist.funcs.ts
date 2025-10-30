@@ -1,4 +1,4 @@
-import type { MutationCtx } from '../_generated/server'
+import type { MutationCtx } from '../../_generated/server'
 
 const EMAIL_RE = /^\S+@\S+\.\S+$/
 

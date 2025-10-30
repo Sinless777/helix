@@ -1,6 +1,6 @@
-import { mutation } from '../_generated/server'
+import { mutation } from '../../_generated/server'
 import { v } from 'convex/values'
-import { addHandler } from '../functions/waitlist.funcs'
+import { addHandler } from '../../functions/user/waitlist.funcs'
 
 export const add = mutation({
   args: {

@@ -1,9 +1,11 @@
 'use strict'
 
-import type { MutationCtx, QueryCtx } from '../_generated/server'
+import type { MutationCtx, QueryCtx } from '../../_generated/server'
 import { v } from 'convex/values'
-import { mutation, query } from '../_generated/server'
-import { getByUserIdHandler, saveHandler } from '../functions/profile.funcs'
+import { mutation, query } from '../../_generated/server'
+import { saveHandler } from '../../functions/user/profile.funcs'
+
+export { getByUserId } from '../../queries/user/profile.query'
 
 export const save = mutation({
   args: {

@@ -1,4 +1,4 @@
-import type { MutationCtx, QueryCtx } from '../_generated/server'
+import type { MutationCtx, QueryCtx } from '../../_generated/server'
 import { v } from 'convex/values'
 
 const DEFAULT_VERSION = 1
