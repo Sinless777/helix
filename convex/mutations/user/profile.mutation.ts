@@ -1,8 +1,8 @@
-'use strict'
+// convex/mutations/user/profile.mutation.ts
+// Connects the shared profile save handler to Convex's mutation registry.
 
-import type { MutationCtx, QueryCtx } from '../../_generated/server'
+import { mutation } from '../../_generated/server'
 import { v } from 'convex/values'
-import { mutation, query } from '../../_generated/server'
 import { saveHandler } from '../../functions/user/profile.funcs'
 
 export { getByUserId } from '../../queries/user/profile.query'
@@ -13,8 +13,12 @@ export const save = mutation({
     encryptedPayload: v.string(),
     iv: v.string(),
     version: v.optional(v.number()),
+    features: v.optional(v.array(v.string())),
+    isPaid: v.optional(v.boolean()),
+    subscriptionPlan: v.optional(v.string()),
+    settingsId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await saveHandler(ctx as MutationCtx, args)
+    return await saveHandler(ctx, args)
   },
 })

@@ -21,7 +21,6 @@ import type { SxProps } from "@mui/material";
 import type { Theme } from "@mui/material/styles";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import { useNotifications, type Notification } from "@/hooks/useNotifications";
 
@@ -90,11 +89,6 @@ export default function ProfileTopbar({
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Profile" arrow>
-          <IconButton size="small" aria-label="profile">
-            <AccountCircleIcon />
-          </IconButton>
-        </Tooltip>
       </Stack>
 
       <Menu

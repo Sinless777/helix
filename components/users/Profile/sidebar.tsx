@@ -51,7 +51,6 @@ export interface ProfileSidebarProps {
 export default function ProfileSidebar({
   items = [
     { key: "profile", label: "Profile" },
-    { key: "accounts", label: "Accounts" },
     { key: "payments", label: "Payments" },
     { key: "subscriptions", label: "Subscriptions" },
     { key: "support", label: "Support Tickets" },

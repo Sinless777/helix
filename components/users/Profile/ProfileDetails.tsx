@@ -20,6 +20,7 @@ import { Sex, SexValues } from '@/content/constants/profile/sex.enum';
 import { Sexuality, SexualityValues } from '@/content/constants/profile/sexuality.enum';
 import { GradeLevel, GradeLevelValues } from '@/content/constants/profile/grade-level.enum';
 import { Country } from '@/content/constants/profile/country.enum';
+import GlassCard from '@/components/ui/GlassCard';
 
 const BIO_MAX_LENGTH = 10_000;
 type MailingAddress = {
@@ -46,6 +47,11 @@ type ProfileBasics = {
   gradeLevel?: string | null;
   country?: string | null;
   mailingAddress?: Partial<MailingAddress> | null;
+  features?: string[] | null;
+  isPaid?: boolean | null;
+  subscriptionPlan?: string | null;
+  settingsId?: string | null;
+  version?: number | null;
 };
 
 type UserBasics = {
@@ -286,24 +292,49 @@ export function ProfileDetails({
           throw new Error('Profile encryption key is not configured');
         }
 
-        const normalized = {
+        const normalizedMailingAddress = hasMailingAddress(trimmed.mailingAddress)
+          ? trimmed.mailingAddress
+          : {
+              street: '',
+              city: '',
+              state: '',
+              postalCode: '',
+              country: '',
+            };
+
+        const encryptedPayload = {
           ...trimmed,
           mailingAddress: hasMailingAddress(trimmed.mailingAddress)
             ? trimmed.mailingAddress
             : null,
         };
 
-        const { ciphertext, iv } = await encryptJson(normalized, profileKey);
+        const { ciphertext, iv } = await encryptJson(encryptedPayload, profileKey);
+
+        const payloadFeatures = Array.isArray(profile.features) ? profile.features : [];
+        const payloadIsPaid = profile.isPaid ?? false;
+        const payloadSubscription = profile.subscriptionPlan ?? null;
+        const payloadSettingsId = profile.settingsId ?? null;
+        const payloadVersion = profile.version ?? 1;
 
         await saveEncryptedProfile({
           userId: profile.userId,
           encryptedPayload: ciphertext,
           iv,
-          version: 1,
+          version: payloadVersion,
+          features: payloadFeatures,
+          isPaid: payloadIsPaid,
+          subscriptionPlan: payloadSubscription ?? undefined,
+          settingsId: payloadSettingsId ?? undefined,
         });
 
-        setProfileData(trimmed);
-        setDraft(trimmed);
+        const nextState: FormState = {
+          ...trimmed,
+          mailingAddress: normalizedMailingAddress,
+        };
+
+        setProfileData(nextState);
+        setDraft(nextState);
         setOpen(false);
       } catch (error) {
         const message =
@@ -371,18 +402,7 @@ export function ProfileDetails({
 
   return (
     <>
-      <Box
-        sx={{
-          width: 600,
-          p: 2,
-          borderRadius: 2,
-          boxShadow: 1,
-          bgcolor: 'background.paper',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-        }}
-      >
+      <GlassCard component="section" sx={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Stack direction="row" spacing={2} alignItems="center">
           {user.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -497,7 +517,7 @@ export function ProfileDetails({
             </Stack>
           </>
         ) : null}
-      </Box>
+      </GlassCard>
 
       {canEdit ? (
         <PrimitiveModal

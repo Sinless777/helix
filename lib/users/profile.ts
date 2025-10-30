@@ -47,6 +47,11 @@ export type Profile = ProfileContent & {
   createdAt: number
   updatedAt: number
   hasRealProfileDoc: boolean
+  features: string[]
+  isPaid: boolean
+  subscriptionPlan: string | null
+  settingsId?: string | null
+  version: number
 }
 
 type StoredProfileDoc = {
@@ -54,8 +59,12 @@ type StoredProfileDoc = {
   _creationTime: number
   userId: string
   encryptedPayload: string
-  iv?: string
+  iv: string
   version?: number
+  features?: string[]
+  isPaid?: boolean
+  subscriptionPlan?: string | null
+  settingsId?: string | null
   createdAt: number
   updatedAt: number
 }
@@ -104,11 +113,16 @@ function defaultProfile(userId: string, now = Date.now()): Profile {
     country: Country.Other,
     mailingAddress: null,
     hasRealProfileDoc: false,
+    features: [],
+    isPaid: false,
+    subscriptionPlan: null,
+    settingsId: null,
+    version: 1,
   }
 }
 
 async function decryptProfile(doc: StoredProfileDoc): Promise<Profile> {
-  const payload = await decryptJson<ProfileContent>(doc.encryptedPayload, doc.iv ?? '', PROFILE_KEY)
+  const payload = await decryptJson<ProfileContent>(doc.encryptedPayload, doc.iv, PROFILE_KEY)
   return {
     _id: doc._id,
     _creationTime: doc._creationTime,
@@ -116,6 +130,11 @@ async function decryptProfile(doc: StoredProfileDoc): Promise<Profile> {
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
     hasRealProfileDoc: true,
+    features: doc.features ?? [],
+    isPaid: doc.isPaid ?? false,
+    subscriptionPlan: doc.subscriptionPlan ?? null,
+    settingsId: doc.settingsId ?? null,
+    version: doc.version ?? 1,
     ...payload,
   }
 }

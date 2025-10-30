@@ -1,5 +1,5 @@
 import type { MutationCtx, QueryCtx } from '../../_generated/server'
-import { v } from 'convex/values'
+import type { Id } from '../../_generated/dataModel'
 
 const DEFAULT_VERSION = 1
 
@@ -17,8 +17,12 @@ type StoredProfileDoc = {
   _creationTime: number
   userId: string
   encryptedPayload: string
-  iv?: string
+  iv: string
   version?: number
+  features?: string[]
+  isPaid?: boolean
+  subscriptionPlan?: string | null
+  settingsId?: Id<'settings'> | null
   createdAt: number
   updatedAt: number
 }
@@ -39,17 +43,34 @@ export async function saveHandler(
     encryptedPayload: string
     iv: string
     version?: number
+    features?: string[]
+    isPaid?: boolean
+    subscriptionPlan?: string | null
+    settingsId?: string | null
   }
 ) {
-  const { userId, encryptedPayload, iv, version } = args
+  const { userId, encryptedPayload, iv, version, features, isPaid, subscriptionPlan, settingsId } = args
   await requireOwnership(ctx, userId)
   const db = (ctx as any).db
   const now = Date.now()
+
+  const normalizedSettingsId = settingsId ? db.normalizeId('settings', settingsId) ?? undefined : undefined
 
   const existing = (await db
     .query('profiles')
     .withIndex('by_userId', (q: any) => q.eq('userId', userId))
     .unique()) as StoredProfileDoc | null
+
+  const nextFeatures = features ?? existing?.features ?? []
+  const nextIsPaid = typeof isPaid === 'boolean' ? isPaid : existing?.isPaid ?? false
+  const nextSubscription =
+    subscriptionPlan !== undefined
+      ? subscriptionPlan
+      : existing?.subscriptionPlan ?? null
+  const nextSettingsId =
+    normalizedSettingsId !== undefined
+      ? normalizedSettingsId
+      : existing?.settingsId ?? undefined
 
   if (!existing) {
     const _id = await db.insert('profiles', {
@@ -57,6 +78,10 @@ export async function saveHandler(
       encryptedPayload,
       iv,
       version: version ?? DEFAULT_VERSION,
+      features: nextFeatures,
+      isPaid: nextIsPaid,
+      subscriptionPlan: nextSubscription,
+      settingsId: nextSettingsId,
       createdAt: now,
       updatedAt: now,
     })
@@ -67,6 +92,10 @@ export async function saveHandler(
     encryptedPayload,
     iv,
     version: version ?? existing.version ?? DEFAULT_VERSION,
+    features: nextFeatures,
+    isPaid: nextIsPaid,
+    subscriptionPlan: nextSubscription,
+    settingsId: nextSettingsId,
     updatedAt: now,
   })
 

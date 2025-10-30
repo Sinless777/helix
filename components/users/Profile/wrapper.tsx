@@ -8,16 +8,26 @@ import { Grid } from "@mui/material";
 import ProfileSidebar from "./sidebar";
 import ProfileTopbar from "./topbar";
 
+export type ProfileSectionKey =
+  | "profile"
+  | "dashboard"
+  | "accounts"
+  | "payments"
+  | "subscriptions"
+  | "support"
+  | "settings";
+
 export interface ProfileLayoutProps {
   user: {
     name: string;
     avatarUrl?: string;
   };
   userId?: string;
-  children: React.ReactNode;
+  sections: Partial<Record<ProfileSectionKey, React.ReactNode>> & { profile: React.ReactNode };
+  defaultSection?: ProfileSectionKey;
 }
 
-export function ProfileLayout({ user, userId, children }: ProfileLayoutProps) {
+export function ProfileLayout({ user, userId, sections, defaultSection = "profile" }: ProfileLayoutProps) {
   const theme = useTheme();
 
   const glass = {
@@ -35,6 +45,11 @@ export function ProfileLayout({ user, userId, children }: ProfileLayoutProps) {
   } as const;
 
   const stickyTop = 16;
+  const [activeSection, setActiveSection] = React.useState<ProfileSectionKey>(defaultSection);
+  const contentKey = React.useMemo<ProfileSectionKey>(() => {
+    return sections[activeSection] ? activeSection : "profile";
+  }, [activeSection, sections]);
+  const activeContent = sections[contentKey] ?? sections.profile;
 
   return (
     <Box
@@ -76,13 +91,12 @@ export function ProfileLayout({ user, userId, children }: ProfileLayoutProps) {
             <Box sx={{ flex: 1, minHeight: 0 }}>
               <ProfileSidebar
                 embedded
-                active="profile"
-                onNavigate={(key) => console.log("navigate", key)}
+                active={activeSection}
+                onNavigate={(key) => setActiveSection(key)}
                 counts={{ supportTickets: 2 }}
                 sx={{ px: 1, py: 1 }}
                 items={[
                   { key: "profile", label: "Profile" },
-                  { key: "accounts", label: "Accounts" },
                   { key: "payments", label: "Payments" },
                   { key: "subscriptions", label: "Subscriptions" },
                   { key: "support", label: "Support Tickets", badge: 2 },
@@ -101,7 +115,7 @@ export function ProfileLayout({ user, userId, children }: ProfileLayoutProps) {
             p: { xs: 0.5, md: 1 },
           }}
         >
-          {children}
+          {activeContent}
         </Grid>
       </Grid>
     </Box>

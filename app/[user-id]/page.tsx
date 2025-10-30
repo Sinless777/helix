@@ -1,15 +1,19 @@
 // app/[user-id]/page.tsx
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 
 import { auth } from "@clerk/nextjs/server";
 import { getUserData } from "@/lib/users/users";
 import { getProfile } from "@/lib/users/profile";
+import { getLinkedAccounts } from "@/lib/users/accounts";
 import { ProfileLayout } from "@/components/users/Profile/wrapper";
 import Header from "@/components/Header";
 import { headerProps } from "@/content/header";
 import ProfileDetails from "@/components/users/Profile/ProfileDetails";
+import ProfileAccountsCard from "@/components/users/Profile/ProfileAccountsCard";
+import PaymentsPanel from "@/components/payments/PaymentsPanel";
+import SubscriptionPanel from "@/components/subscriptions/SubscriptionPanel";
 
 type PageParams = { "user-id": string };
 type PageProps = { params: Promise<PageParams> };
@@ -49,7 +53,12 @@ export default async function AboutUserPage(props: PageProps) {
   ]);
   if (!user) notFound();
 
-  const profile = user.profile ?? (await getProfile(user.id));
+  // Fetch the profile (ensuring we hydrate virtual defaults) and any linked
+  // external accounts in parallel so the page can render both cards together.
+  const [profile, accounts] = await Promise.all([
+    user.profile ?? getProfile(user.id),
+    getLinkedAccounts(user.id),
+  ]);
   if (!profile) notFound();
 
   const avatarUrl = user.avatarUrl;
@@ -71,40 +80,74 @@ export default async function AboutUserPage(props: PageProps) {
   return (
     <Box>
       <Header {...headerProps} pages={[...headerProps.pages]} />
-      <ProfileLayout user={layoutUser} userId={user.id}>
-        <Box sx={{ pt: 2, pb: 4, display: "flex", justifyContent: "center" }}>
-          <ProfileDetails
-            user={{
-              id: user.id,
-              name: layoutName,
-              username: user.username ?? null,
-              avatarUrl: avatarUrl ?? null,
-              createdAt: user.createdAt ?? null,
-              bio: user.bio ?? null,
-              about: user.about ?? null,
-            }}
-            profile={{
-              userId: profile.userId,
-              firstName: profile.firstName ?? null,
-              middleName: profile.middleName ?? null,
-              lastName: profile.lastName ?? null,
-              gender: profile.gender ?? null,
-              sex: profile.sex ?? null,
-              sexuality: profile.sexuality ?? null,
-              genderCustom: profile.genderCustom ?? null,
-              sexCustom: profile.sexCustom ?? null,
-              sexualityCustom: profile.sexualityCustom ?? null,
-              bio: profile.bio ?? null,
-              profession: profile.profession ?? null,
-              gradeLevel: profile.gradeLevel ?? null,
-              country: profile.country ?? null,
-              mailingAddress: profile.mailingAddress ?? null,
-            }}
-            canEdit={canEdit}
-            isAuthenticated={isAuthenticated}
-          />
-        </Box>
-      </ProfileLayout>
+      <ProfileLayout
+        user={layoutUser}
+        userId={user.id}
+        sections={{
+          profile: (
+            <Box sx={{ pt: 2, pb: 4, display: "flex", justifyContent: "center" }}>
+              <Grid container spacing={2} alignItems="stretch">
+                <Grid size={{ xs: 12, lg: 8 }} sx={{ display: "flex" }}>
+                  <ProfileDetails
+                    user={{
+                      id: user.id,
+                      name: layoutName,
+                      username: user.username ?? null,
+                      avatarUrl: avatarUrl ?? null,
+                      createdAt: user.createdAt ?? null,
+                      bio: user.bio ?? null,
+                      about: user.about ?? null,
+                    }}
+                    profile={{
+                      userId: profile.userId,
+                      firstName: profile.firstName ?? null,
+                      middleName: profile.middleName ?? null,
+                      lastName: profile.lastName ?? null,
+                      gender: profile.gender ?? null,
+                      sex: profile.sex ?? null,
+                      sexuality: profile.sexuality ?? null,
+                      genderCustom: profile.genderCustom ?? null,
+                      sexCustom: profile.sexCustom ?? null,
+                      sexualityCustom: profile.sexualityCustom ?? null,
+                      bio: profile.bio ?? null,
+                      profession: profile.profession ?? null,
+                      gradeLevel: profile.gradeLevel ?? null,
+                      country: profile.country ?? null,
+                      mailingAddress: profile.mailingAddress ?? null,
+                      features: profile.features ?? [],
+                      isPaid: profile.isPaid ?? false,
+                      subscriptionPlan: profile.subscriptionPlan ?? null,
+                      settingsId: profile.settingsId ?? null,
+                      version: profile.version ?? 1,
+                    }}
+                    canEdit={canEdit}
+                    isAuthenticated={isAuthenticated}
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12, lg: 4 }} sx={{ display: "flex" }}>
+                  <ProfileAccountsCard
+                    userId={user.id}
+                    accounts={accounts}
+                    canManage={canEdit}
+                    fallbackManageHref={`/${encodeURIComponent(user.id)}/settings/accounts`}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          ),
+          payments: (
+            <Box sx={{ pt: 2, pb: 4 }}>
+              <PaymentsPanel />
+            </Box>
+          ),
+          subscriptions: (
+            <Box sx={{ pt: 2, pb: 4 }}>
+              <SubscriptionPanel />
+            </Box>
+          ),
+        }}
+      />
     </Box>
   );
 }
