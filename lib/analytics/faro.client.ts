@@ -16,7 +16,9 @@ type FaroClientConfig = {
 function buildConfig(overrides: Partial<FaroClientConfig> = {}): FaroClientConfig | null {
   const faro = appConfig?.grafanaCloud?.addOns?.faro;
 
-  if (!faro || !faro.enabled) return null;
+  // Faro should always be enabled — ignore any disabled flag and rely on
+  // the presence of a URL to determine whether to initialize.
+  if (!faro) return null;
 
   const url = overrides.url ?? faro.url ?? process.env.NEXT_PUBLIC_FARO_URL ?? '';
   if (!url) return null;
@@ -45,15 +47,30 @@ export function initFaro(overrides: Partial<FaroClientConfig> = {}) {
     return null;
   }
 
-  faroSingleton = initializeFaro({
-    url: config.url,
-    app: {
-      name: config.appName,
-      version: config.appVersion,
-      environment: config.environment,
-    },
-    instrumentations: [...getWebInstrumentations(), new TracingInstrumentation()],
-  });
+  try {
+    if (process.env.NODE_ENV === 'development') {
+      // Log non-secret runtime values to help local debugging
+      console.info('[Faro] initializing', {
+        app: { name: config.appName, version: config.appVersion, environment: config.environment },
+      });
+    }
+
+    faroSingleton = initializeFaro({
+      url: config.url,
+      app: {
+        name: config.appName,
+        version: config.appVersion,
+        environment: config.environment,
+      },
+      instrumentations: [...getWebInstrumentations(), new TracingInstrumentation()],
+    });
+  } catch (err) {
+    // Don't crash the app if Faro initialization fails. Log for diagnostics.
+    // Avoid logging the URL to prevent accidental secret exposure.
+    // eslint-disable-next-line no-console
+    console.error('[Faro] failed to initialize:', err instanceof Error ? err.message : err);
+    faroSingleton = null;
+  }
 
   return faroSingleton;
 }
