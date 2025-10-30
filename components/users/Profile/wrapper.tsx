@@ -13,10 +13,11 @@ export interface ProfileLayoutProps {
     name: string;
     avatarUrl?: string;
   };
+  userId?: string;
   children: React.ReactNode;
 }
 
-export function ProfileLayout({ user, children }: ProfileLayoutProps) {
+export function ProfileLayout({ user, userId, children }: ProfileLayoutProps) {
   const theme = useTheme();
 
   const glass = {
@@ -63,7 +64,11 @@ export function ProfileLayout({ user, children }: ProfileLayoutProps) {
               flexDirection: "column",
             }}
           >
-            <ProfileTopbar user={user} embedded sx={{ px: 2, py: 1.25 }} />
+            {userId ? (
+              <ProfileTopbar user={user} userId={userId} embedded sx={{ px: 2, py: 1.25 }} />
+            ) : (
+              <ProfileTopbar user={user} embedded sx={{ px: 2, py: 1.25 }} />
+            )}
 
             <Divider sx={{ opacity: 0.3 }} />
 

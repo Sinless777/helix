@@ -71,7 +71,7 @@ export default async function AboutUserPage(props: PageProps) {
   return (
     <Box>
       <Header {...headerProps} pages={[...headerProps.pages]} />
-      <ProfileLayout user={layoutUser}>
+      <ProfileLayout user={layoutUser} userId={user.id}>
         <Box sx={{ pt: 2, pb: 4, display: "flex", justifyContent: "center" }}>
           <ProfileDetails
             user={{

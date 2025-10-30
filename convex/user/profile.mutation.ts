@@ -3,14 +3,7 @@
 import type { MutationCtx, QueryCtx } from '../_generated/server'
 import { v } from 'convex/values'
 import { mutation, query } from '../_generated/server'
-import { getByUserIdHandler, saveHandler } from '../profile.funcs'
-
-export const getByUserId = query({
-  args: { userId: v.string() },
-  handler: async (ctx, { userId }) => {
-    return await getByUserIdHandler(ctx as QueryCtx, userId)
-  },
-})
+import { getByUserIdHandler, saveHandler } from '../functions/profile.funcs'
 
 export const save = mutation({
   args: {
