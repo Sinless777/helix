@@ -39,6 +39,8 @@ convex/.env.local
 .env
 .env.*.local
 .env.local
+.env.production
+.env.development
 .envrc
 .envrc.*
 *.pem
@@ -83,3 +85,4 @@ temp/
 .cache/
 logs/
 uploads/
+.vercel
