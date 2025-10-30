@@ -3,6 +3,7 @@
 This PR introduces the design and implementation plan for a hybrid RBAC/ABAC authorization system.
 
 Summary
+
 - Provide a hybrid authorization model: role-based permissions (RBAC) augmented with attribute-based checks (ABAC).
 - Store roles and permissions (features) in the DB.
 - Map Clerk features/claims into internal permissions where relevant.
@@ -10,9 +11,11 @@ Summary
 - Add an admin dashboard scaffold to manage roles, permissions, role inheritance, and user role assignments.
 
 Why
+
 - We need flexible, auditable, and maintainable access controls across the app and admin UI.
 
 High-level design / contract
+
 - Data shapes
   - Role: { id, name, description, default: false }
   - Permission (Feature): { id, name, description }
@@ -26,10 +29,12 @@ High-level design / contract
   - Authorization flow: check effective permission -> if permission has attribute conditions then evaluate ABAC rules -> allow/deny
 
 Integration with Clerk
+
 - Keep Clerk as the auth provider. Store Clerk ID on UserProfile to link record.
 - Treat Clerk "features" or claims as source-of-truth for external entitlements; provide a small sync routine to map Clerk features into Permission entries.
 
 Admin Dashboard
+
 - New admin pages under `/app/admin` (or `/app/users/admin`) to manage:
   - Roles and their permissions
   - Permission (Feature) catalogue (import from Clerk)
@@ -38,9 +43,11 @@ Admin Dashboard
   - Logs/audit panel for changes
 
 Security
+
 - Only admins can change roles/permissions. Guard admin routes with a server-side check (role-based + attribute checks if needed).
 
 Acceptance criteria
+
 - Roles and permission models are created and migrated.
 - Ability to assign exactly one role to a user.
 - Role inheritance works for permission aggregation.
@@ -62,13 +69,16 @@ Implementation TODOs (checklist)
 - [ ] Document how to migrate existing users and how to deploy the migration
 
 Notes / Migration
+
 - New DB tables required. Add migration with clear rollback.
 - Existing users: create a script to bootstrap a default role for existing users (e.g., 'user').
 
 How to review
+
 - Review this PR for design and checklist completeness. Subsequent PRs will implement the DB schema, backend APIs, and admin UI incrementally.
 
 Related todos (from workspace task list)
+
 - See the todos in the repo task manager for step-by-step progress tracking.
 
 --
