@@ -1,3 +1,9 @@
 onlyBuiltDependencies:
   - '@clerk/shared'
   - esbuild
+
+packages:
+  -  app/**
+  -  components/**
+  -  lib/**
+  -  convex/**
