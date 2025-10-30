@@ -97,6 +97,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         style={{ colorScheme: mode }}
         suppressHydrationWarning
       >
+        <head>
+          <meta name="google-adsense-account" content="ca-pub-9610840170359196"></meta>
+        </head>
         <SpeedInsights />
         <Analytics />
         <MuiAppTheme>
