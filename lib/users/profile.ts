@@ -1,85 +1,102 @@
 // lib/users/profile.ts
 // Utilities to fetch and manipulate encrypted profile records via Convex.
 
-import { convexQuery } from '@/lib/convex'
-import { decryptJson, encryptJson } from '@/lib/security/encrypt.util'
-import { Gender, GenderValues } from '@/content/constants/profile/gender.enum'
-import { Sex, SexValues } from '@/content/constants/profile/sex.enum'
-import { Sexuality, SexualityValues } from '@/content/constants/profile/sexuality.enum'
-import { GradeLevel, GradeLevelValues } from '@/content/constants/profile/grade-level.enum'
-import { Country, CountryValues } from '@/content/constants/profile/country.enum'
+import type { CountryValues } from '@/content/constants/profile/country.enum';
+import { Country } from '@/content/constants/profile/country.enum';
+import type { GenderValues } from '@/content/constants/profile/gender.enum';
+import { Gender } from '@/content/constants/profile/gender.enum';
+import type { GradeLevelValues } from '@/content/constants/profile/grade-level.enum';
+import { GradeLevel } from '@/content/constants/profile/grade-level.enum';
+import type { SexValues } from '@/content/constants/profile/sex.enum';
+import { Sex } from '@/content/constants/profile/sex.enum';
+import type { SexualityValues } from '@/content/constants/profile/sexuality.enum';
+import { Sexuality } from '@/content/constants/profile/sexuality.enum';
+import type { Role } from '@/content/constants/roles';
+import { convexQuery } from '@/lib/convex';
+import { decryptJson, encryptJson } from '@/lib/security/encrypt.util';
 
-const profileKeyEnv = process.env.NEXT_PUBLIC_PROFILE_ENCRYPTION_KEY
+const profileKeyEnv = process.env.NEXT_PUBLIC_PROFILE_ENCRYPTION_KEY;
 if (!profileKeyEnv) {
-  throw new Error('Missing NEXT_PUBLIC_PROFILE_ENCRYPTION_KEY for profile encryption')
+  throw new Error('Missing NEXT_PUBLIC_PROFILE_ENCRYPTION_KEY for profile encryption');
 }
-const PROFILE_KEY: string = profileKeyEnv
+const PROFILE_KEY: string = profileKeyEnv;
 
 export type MailingAddress = {
-  street: string
-  city: string
-  state: string
-  postalCode: string
-  country: string
-}
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+};
 
 export type ProfileContent = {
-  firstName: string
-  middleName?: string
-  lastName: string
-  gender: (typeof GenderValues)[number]
-  sex: (typeof SexValues)[number]
-  sexuality: (typeof SexualityValues)[number]
-  genderCustom?: string
-  sexCustom?: string
-  sexualityCustom?: string
-  bio?: string
-  profession?: string
-  gradeLevel: (typeof GradeLevelValues)[number]
-  country: (typeof CountryValues)[number]
-  mailingAddress: MailingAddress | null
-}
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  gender: (typeof GenderValues)[number];
+  sex: (typeof SexValues)[number];
+  sexuality: (typeof SexualityValues)[number];
+  genderCustom?: string;
+  sexCustom?: string;
+  sexualityCustom?: string;
+  bio?: string;
+  profession?: string;
+  gradeLevel: (typeof GradeLevelValues)[number];
+  country: (typeof CountryValues)[number];
+  mailingAddress: MailingAddress | null;
+};
 
 export type Profile = ProfileContent & {
-  _id: string
-  _creationTime: number
-  userId: string
-  createdAt: number
-  updatedAt: number
-  hasRealProfileDoc: boolean
-}
+  _id: string;
+  _creationTime: number;
+  userId: string;
+  createdAt: number;
+  updatedAt: number;
+  hasRealProfileDoc: boolean;
+  features: string[];
+  isPaid: boolean;
+  subscriptionPlan: string | null;
+  settingsId?: string | null;
+  version: number;
+  role: Role;
+};
 
 type StoredProfileDoc = {
-  _id: string
-  _creationTime: number
-  userId: string
-  encryptedPayload: string
-  iv?: string
-  version?: number
-  createdAt: number
-  updatedAt: number
-}
+  _id: string;
+  _creationTime: number;
+  userId: string;
+  encryptedPayload: string;
+  iv: string;
+  version?: number;
+  features?: string[];
+  isPaid?: boolean;
+  subscriptionPlan?: string | null;
+  settingsId?: string | null;
+  role?: string | null;
+  createdAt: number;
+  updatedAt: number;
+};
 
-const BIO_MAX_LENGTH = 10_000
+const BIO_MAX_LENGTH = 10_000;
 
-const trim = (s: string | undefined | null) => (s ?? '').trim()
+const trim = (s: string | undefined | null) => (s ?? '').trim();
 
 function normalizeMailingAddress(value?: MailingAddress | null): MailingAddress | null {
-  if (!value) return null
+  if (!value) return null;
   const addr: MailingAddress = {
     street: trim(value.street),
     city: trim(value.city),
     state: trim(value.state),
     postalCode: trim(value.postalCode),
     country: trim(value.country),
-  }
-  return Object.values(addr).some((part) => part.length > 0) ? addr : null
+  };
+  return Object.values(addr).some((part) => part.length > 0) ? addr : null;
 }
 
 function clampBio(bio?: string) {
-  if (!bio) return ''
-  if (bio.length <= BIO_MAX_LENGTH) return bio
-  return bio.slice(0, BIO_MAX_LENGTH)
+  if (!bio) return '';
+  if (bio.length <= BIO_MAX_LENGTH) return bio;
+  return bio.slice(0, BIO_MAX_LENGTH);
 }
 
 function defaultProfile(userId: string, now = Date.now()): Profile {
@@ -104,11 +121,17 @@ function defaultProfile(userId: string, now = Date.now()): Profile {
     country: Country.Other,
     mailingAddress: null,
     hasRealProfileDoc: false,
-  }
+    features: [],
+    isPaid: false,
+    subscriptionPlan: null,
+    settingsId: null,
+    version: 1,
+    role: 'user',
+  };
 }
 
 async function decryptProfile(doc: StoredProfileDoc): Promise<Profile> {
-  const payload = await decryptJson<ProfileContent>(doc.encryptedPayload, doc.iv ?? '', PROFILE_KEY)
+  const payload = await decryptJson<ProfileContent>(doc.encryptedPayload, doc.iv, PROFILE_KEY);
   return {
     _id: doc._id,
     _creationTime: doc._creationTime,
@@ -116,18 +139,26 @@ async function decryptProfile(doc: StoredProfileDoc): Promise<Profile> {
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
     hasRealProfileDoc: true,
+    features: doc.features ?? [],
+    isPaid: doc.isPaid ?? false,
+    subscriptionPlan: doc.subscriptionPlan ?? null,
+    settingsId: doc.settingsId ?? null,
+    version: doc.version ?? 1,
+    role: (doc.role as Role | undefined) ?? 'user',
     ...payload,
-  }
+  };
 }
 
 export async function getProfile(userId: string): Promise<Profile> {
-  const doc = await convexQuery<StoredProfileDoc | null>('profile:getByUserId', { userId }).catch(() => null)
-  if (!doc) return defaultProfile(userId)
+  const doc = await convexQuery<StoredProfileDoc | null>('profile:getByUserId', { userId }).catch(
+    () => null
+  );
+  if (!doc) return defaultProfile(userId);
   try {
-    return await decryptProfile(doc)
+    return await decryptProfile(doc);
   } catch (error) {
-    console.error('[profile] failed to decrypt profile payload', error)
-    return defaultProfile(userId)
+    console.error('[profile] failed to decrypt profile payload', error);
+    return defaultProfile(userId);
   }
 }
 
@@ -147,9 +178,9 @@ export function normalizeProfileForSave(payload: ProfileContent): ProfileContent
     gradeLevel: payload.gradeLevel ?? GradeLevel.PreferNotToSay,
     country: payload.country ?? Country.Other,
     mailingAddress: normalizeMailingAddress(payload.mailingAddress),
-  }
+  };
 }
 
 export async function encryptProfileForSave(content: ProfileContent) {
-  return encryptJson(content, PROFILE_KEY)
+  return encryptJson(content, PROFILE_KEY);
 }

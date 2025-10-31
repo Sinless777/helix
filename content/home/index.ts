@@ -3,9 +3,9 @@
 /** Represents a single navigation page */
 export interface Page {
   /** Display name shown in the nav */
-  name: string
+  name: string;
   /** Path or URL */
-  url: string
+  url: string;
 }
 
 /** Main navigation pages for Helix */
@@ -14,5 +14,5 @@ export const pages: Readonly<Page[]> = [
   { name: 'About', url: '/About' },
   { name: 'Contact', url: '/Contact' },
   { name: 'Tech Stack', url: '/technology' },
-  { name: 'Docs', url: '/Docs' }
-] as const
+  { name: 'Docs', url: '/Docs' },
+] as const;

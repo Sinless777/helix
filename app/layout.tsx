@@ -1,34 +1,20 @@
 // app/layout.tsx
-import React from 'react'
-import type { Metadata, Viewport } from 'next'
-import { ClerkProvider } from '@clerk/nextjs'
-import { Providers } from '@/components/providers'
-import { BackgroundImage } from '@/components/Background'
-import { cn } from '@/lib/utils'
-import { Inter, Pinyon_Script, Lora } from 'next/font/google'
-import { getClerkAppearance } from '@/components/theme'
-import MuiAppTheme from '@/components/MuiAppTheme'
-import { Analytics } from '@vercel/analytics/next'
-import Script from 'next/script'
+import { ClerkProvider } from '@clerk/nextjs';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import type { Metadata, Viewport } from 'next';
+// Removed next/font/google to support offline/CI builds. Fonts fall back to
+// system fonts via CSS variables in HelixFonts.
+import Script from 'next/script';
+import React from 'react';
 
-const pinyon = Pinyon_Script({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-pinyon',
-  display: 'swap',
-})
+import { BackgroundImage } from '@/components/Background';
+import MuiAppTheme from '@/components/MuiAppTheme';
+import { Providers } from '@/components/providers';
+import { getClerkAppearance } from '@/components/theme';
+import { cn } from '@/lib/utils';
 
-const lora = Lora({
-  subsets: ['latin'],
-  variable: '--font-lora',
-  display: 'swap',
-})
-
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-})
+// Note: If you want local fonts, switch to `next/font/local` with bundled files.
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://helixai.com'),
@@ -86,7 +72,7 @@ export const metadata: Metadata = {
     apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
   },
   manifest: '/site.webmanifest',
-}
+};
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -96,38 +82,21 @@ export const viewport: Viewport = {
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#000000' },
   ],
-}
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const mode: 'dark' | 'light' = 'dark'
-  const clerkAppearance = getClerkAppearance(mode)
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const mode: 'dark' | 'light' = 'dark';
+  const clerkAppearance = getClerkAppearance(mode);
 
   return (
     <ClerkProvider appearance={clerkAppearance}>
-      <html
-        lang="en"
-        className={`${inter.variable} ${lora.variable} ${pinyon.variable} ${
-          mode === 'dark' ? 'dark' : ''
-        }`}
-        style={{ colorScheme: mode }}
-        suppressHydrationWarning
-      >
+      <html lang="en" className={`${mode === 'dark' ? 'dark' : ''}`} style={{ colorScheme: mode }} suppressHydrationWarning>
         <head>
           {/* AdSense Meta Tag */}
-          <meta
-            name="google-adsense-account"
-            content="ca-pub-9610840170359196"
-          />
+          <meta name="google-adsense-account" content="ca-pub-9610840170359196" />
 
           {/* Google Analytics / GTM */}
-          <Script
-            async
-            src="https://www.googletagmanager.com/gtag/js?id=G-EXCL6FMDHY"
-          />
+          <Script async src="https://www.googletagmanager.com/gtag/js?id=G-EXCL6FMDHY" />
           <Script id="gtag-init" strategy="afterInteractive">
             {`
               window.dataLayer = window.dataLayer || [];
@@ -139,6 +108,7 @@ export default function RootLayout({
         </head>
         <body className={cn('antialiased', 'bg-black text-white')}>
           <Analytics />
+          <SpeedInsights />
           <MuiAppTheme>
             <Providers>
               <BackgroundImage
@@ -152,5 +122,5 @@ export default function RootLayout({
         </body>
       </html>
     </ClerkProvider>
-  )
+  );
 }

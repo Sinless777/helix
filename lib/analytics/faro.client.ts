@@ -2,6 +2,7 @@
 
 import { getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
 import { TracingInstrumentation } from '@grafana/faro-web-tracing';
+
 import appConfig from '@/content/constants/config';
 
 let faroSingleton: ReturnType<typeof initializeFaro> | null = null;
@@ -25,11 +26,20 @@ function buildConfig(overrides: Partial<FaroClientConfig> = {}): FaroClientConfi
 
   return {
     url,
-    appName: overrides.appName ?? faro.appName ?? process.env.NEXT_PUBLIC_FARO_APP_NAME ?? 'helix-app',
+    appName:
+      overrides.appName ?? faro.appName ?? process.env.NEXT_PUBLIC_FARO_APP_NAME ?? 'helix-app',
     appVersion:
-      overrides.appVersion ?? faro.appVersion ?? process.env.NEXT_PUBLIC_FARO_APP_VERSION ?? process.env.NEXT_PUBLIC_APP_VERSION ?? 'dev',
+      overrides.appVersion ??
+      faro.appVersion ??
+      process.env.NEXT_PUBLIC_FARO_APP_VERSION ??
+      process.env.NEXT_PUBLIC_APP_VERSION ??
+      'dev',
     environment:
-      overrides.environment ?? faro.environment ?? process.env.NEXT_PUBLIC_FARO_APP_ENV ?? process.env.NODE_ENV ?? 'development',
+      overrides.environment ??
+      faro.environment ??
+      process.env.NEXT_PUBLIC_FARO_APP_ENV ??
+      process.env.NODE_ENV ??
+      'development',
   };
 }
 
@@ -67,7 +77,7 @@ export function initFaro(overrides: Partial<FaroClientConfig> = {}) {
   } catch (err) {
     // Don't crash the app if Faro initialization fails. Log for diagnostics.
     // Avoid logging the URL to prevent accidental secret exposure.
-    // eslint-disable-next-line no-console
+
     console.error('[Faro] failed to initialize:', err instanceof Error ? err.message : err);
     faroSingleton = null;
   }

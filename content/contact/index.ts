@@ -1,12 +1,11 @@
 type ContactOption = {
-  title: string
-  description: string
-  link: string
-  buttonText: string
-  image?: string
-  bgColor?: string
-}
-
+  title: string;
+  description: string;
+  link: string;
+  buttonText: string;
+  image?: string;
+  bgColor?: string;
+};
 
 export const CONTACT_OPTIONS: ContactOption[] = [
   {
@@ -54,4 +53,4 @@ export const CONTACT_OPTIONS: ContactOption[] = [
     image: 'https://cdn.sinlessgamesllc.com/Helix-AI/images/Give-Feedback.png',
     bgColor: '#143256',
   },
-]
+];

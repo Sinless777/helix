@@ -1,0 +1,17 @@
+name = "helix-worker"
+main = "src/index.ts"
+compatibility_date = "2024-11-07"
+workers_dev = true
+
+[vars]
+DISCORD_BOT_URL = "${DISCORD_BOT_URL}"
+
+[[queues.producers]]
+binding = "HELIX_EVENTS"
+queue = "helix-events"
+
+[[queues.consumers]]
+queue = "helix-events"
+max_batch_size = 10
+max_batch_timeout = "5s"
+script_name = "helix-worker"

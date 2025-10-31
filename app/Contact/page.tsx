@@ -1,15 +1,16 @@
 // app/Contact/page.tsx
-'use client'
+'use client';
 
-import React from 'react'
-import Header from '@/components/Header'
-import { headerProps } from '@/content/header'
-import { CONTACT_OPTIONS } from '@/content/contact'
-import HelixCard from '@/components/Card'
+import { Box, Container, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid'; // v2 API (supports `size`)
+import React from 'react';
 
-import { Box, Container, Typography } from '@mui/material'
+import HelixCard from '@/components/Card';
+import Header from '@/components/Header';
+import { CONTACT_OPTIONS } from '@/content/contact';
+import { headerProps } from '@/content/header';
+
 // If your project is on MUI v6 with Grid v2 as default, this import is fine:
-import Grid from '@mui/material/Grid' // v2 API (supports `size`)
 
 export default function ContactPage() {
   return (
@@ -25,15 +26,15 @@ export default function ContactPage() {
         }}
       >
         <Container maxWidth="lg">
-          <Typography
-            variant="h2"
-            align="center"
-            sx={{ fontWeight: 700, mb: 3 }}
-          >
+          <Typography variant="h2" align="center" sx={{ fontWeight: 700, mb: 3 }}>
             Contact Us
           </Typography>
 
-          <Grid container spacing={2} sx={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+          <Grid
+            container
+            spacing={2}
+            sx={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}
+          >
             {CONTACT_OPTIONS.map((option) => (
               <Grid key={option.title} size={{ xs: 12, sm: 6, md: 4 }}>
                 <HelixCard
@@ -46,9 +47,7 @@ export default function ContactPage() {
                     // Let each card pick up its accent from the content config
                     borderColor: option.bgColor ?? undefined,
                     // Slight tinted overlay to echo your brand blue if provided
-                    ...(option.bgColor
-                      ? { backgroundColor: 'rgba(0,0,0,0.40)' }
-                      : {}),
+                    ...(option.bgColor ? { backgroundColor: 'rgba(0,0,0,0.40)' } : {}),
                   }}
                 />
               </Grid>
@@ -57,5 +56,5 @@ export default function ContactPage() {
         </Container>
       </Box>
     </main>
-  )
+  );
 }

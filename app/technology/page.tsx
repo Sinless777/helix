@@ -1,38 +1,38 @@
 // app/Technology/page.tsx
-'use client'
+'use client';
 
-import React, { useEffect, useMemo } from 'react'
-import Script from 'next/script'
-import Header from '@/components/Header'
-import { headerProps } from '@/content/header'
-import HelixCard from '@/components/Card'
-import type { CardProps } from '@/components/Card'
-import * as Constants from '@/content/technology'
+import { Box, Container, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid'; // MUI v2 Grid (supports `size`)
+import Script from 'next/script';
+import React, { useEffect, useMemo } from 'react';
 
-import { Box, Container, Typography } from '@mui/material'
-import Grid from '@mui/material/Grid' // MUI v2 Grid (supports `size`)
+import HelixCard from '@/components/Card';
+import type { CardProps } from '@/components/Card';
+import Header from '@/components/Header';
+import { headerProps } from '@/content/header';
+import * as Constants from '@/content/technology';
 
 declare global {
   interface Window {
-    adsbygoogle?: Array<Record<string, unknown>>
+    adsbygoogle?: Array<Record<string, unknown>>;
   }
 }
 
 export default function Technology() {
   // Build & sort once
   const allCards = useMemo<CardProps[]>(() => {
-    const cards = Object.values(Constants).flat() as CardProps[]
-    return [...cards].sort((a, b) => a.title.localeCompare(b.title))
-  }, [])
+    const cards = Object.values(Constants).flat() as CardProps[];
+    return [...cards].sort((a, b) => a.title.localeCompare(b.title));
+  }, []);
 
   // Initialize AdSense after mount (and when card count changes)
   useEffect(() => {
     try {
-      ;(window.adsbygoogle = window.adsbygoogle || []).push({})
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch {
       // ignore locally
     }
-  }, [allCards.length])
+  }, [allCards.length]);
 
   return (
     <main>
@@ -97,9 +97,9 @@ export default function Technology() {
               mx: 'auto',
             }}
           >
-            Helix AI is built on modern, battle-tested technologies—selected for
-            performance, reliability, scalability, and security. Explore the systems
-            that power Helix—engineered to evolve, scale, and serve.
+            Helix AI is built on modern, battle-tested technologies—selected for performance,
+            reliability, scalability, and security. Explore the systems that power Helix—engineered
+            to evolve, scale, and serve.
           </Typography>
         </Container>
       </Box>
@@ -121,5 +121,5 @@ export default function Technology() {
         </Container>
       </Box>
     </main>
-  )
+  );
 }

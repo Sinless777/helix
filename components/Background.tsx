@@ -1,12 +1,12 @@
-import { Box } from '@mui/material'
-import Image from 'next/image'
-import React from 'react'
+import { Box } from '@mui/material';
+import Image from 'next/image';
+import React from 'react';
 
 export interface BackgroundImageProps {
-  imageUrl: string
-  altText: string
-  style?: React.CSSProperties
-  children?: React.ReactNode
+  imageUrl: string;
+  altText: string;
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
 }
 
 export const BackgroundImage: React.FC<BackgroundImageProps> = ({
@@ -21,7 +21,7 @@ export const BackgroundImage: React.FC<BackgroundImageProps> = ({
     React.createElement(
       Box,
       {
-        sx: ({
+        sx: {
           position: 'fixed',
           top: 0,
           left: 0,
@@ -33,7 +33,7 @@ export const BackgroundImage: React.FC<BackgroundImageProps> = ({
           justifyContent: 'center',
           alignItems: 'center',
           overflow: 'hidden',
-        } as any),
+        } as any,
       },
       React.createElement(Image, {
         src: imageUrl,
@@ -45,20 +45,20 @@ export const BackgroundImage: React.FC<BackgroundImageProps> = ({
           objectFit: 'fill', // show entire image
           objectPosition: 'center', // center it
         },
-      }),
+      })
     ),
     React.createElement(
       Box,
       {
-        sx: ({
+        sx: {
           position: 'relative',
           zIndex: 0,
           ...(style ?? {}),
-        } as any),
+        } as any,
       },
-      children,
-    ),
-  )
-}
+      children
+    )
+  );
+};
 
-export default BackgroundImage
+export default BackgroundImage;

@@ -1,9 +1,10 @@
-'use client'
+'use client';
 
-import React from 'react'
-import ConvexClientProvider from './ConvexClientProvider'
-import NextThemeProvider from './NextThemeProvider'
-import FaroProvider from './FaroProvider'
+import React from 'react';
+
+import ConvexClientProvider from './ConvexClientProvider';
+import FaroProvider from './FaroProvider';
+import NextThemeProvider from './NextThemeProvider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -12,7 +13,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <NextThemeProvider>{children}</NextThemeProvider>
       </FaroProvider>
     </ConvexClientProvider>
-  )
+  );
 }
 
-export default Providers
+export default Providers;

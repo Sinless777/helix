@@ -1,6 +1,7 @@
 'use client';
 
 import { type ReactNode, useEffect } from 'react';
+
 import { initFaro } from '@/lib/analytics/faro.client';
 
 type FaroProviderProps = {

@@ -1,78 +1,75 @@
-'use client'
+'use client';
 
-import { Alert, Box, Button, TextField, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
-import Grid from '@mui/material/Grid'
-import Image from 'next/image'
-import React from 'react'
+import { Alert, Box, Button, TextField, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import React from 'react';
 
 export function HeroWaitlist() {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<
-    'idle' | 'sending' | 'success' | 'error'
-  >('idle')
-  const [errorMsg, setErrorMsg] = useState('')
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const isValidEmail = /^\S+@\S+\.\S+$/.test(email)
+  const isValidEmail = /^\S+@\S+\.\S+$/.test(email);
 
   // When we hit ‘success’, schedule it to clear in 5s:
   useEffect(() => {
     if (status === 'success') {
       const timer = setTimeout(() => {
-        setStatus('idle')
-      }, 5000)
-      return () => clearTimeout(timer)
+        setStatus('idle');
+      }, 5000);
+      return () => clearTimeout(timer);
     } else if (status === 'error') {
       const timer = setTimeout(() => {
-        setStatus('idle')
-      }, 5000)
-      return () => clearTimeout(timer)
+        setStatus('idle');
+      }, 5000);
+      return () => clearTimeout(timer);
     } else if (status === 'sending') {
       const timer = setTimeout(() => {
-        setStatus('idle')
-      }, 5000)
-      return () => clearTimeout(timer)
+        setStatus('idle');
+      }, 5000);
+      return () => clearTimeout(timer);
     }
-    return undefined
-  }, [status])
+    return undefined;
+  }, [status]);
 
   // in components/Waitlist.tsx
   const handleSubmit = async () => {
-    if (!isValidEmail) return
-    setStatus('sending')
-    setErrorMsg('')
+    if (!isValidEmail) return;
+    setStatus('sending');
+    setErrorMsg('');
 
     try {
       const res = await fetch('/api/V1/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
-      })
+      });
 
-      let body: any = null
+      let body: any = null;
       try {
-        body = await res.json()
+        body = await res.json();
       } catch {
         // ignore JSON parse error; we'll use res.ok below
       }
 
       if (!res.ok) {
-        const serverMsg = body?.message || `HTTP ${res.status}`
-        throw new Error(serverMsg)
+        const serverMsg = body?.message || `HTTP ${res.status}`;
+        throw new Error(serverMsg);
       }
 
       if (body?.status === 'success') {
-        setStatus('success')
-        setEmail('')
+        setStatus('success');
+        setEmail('');
       } else {
-        throw new Error(body?.message || 'Server error')
+        throw new Error(body?.message || 'Server error');
       }
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Unknown error occurred')
-      setStatus('error')
+      setErrorMsg(err instanceof Error ? err.message : 'Unknown error occurred');
+      setStatus('error');
     }
-  }
-
+  };
 
   return (
     <Box
@@ -99,19 +96,12 @@ export function HeroWaitlist() {
 
       {/* Feedback */}
       {status === 'success' && (
-        <Alert
-          severity="success"
-          sx={{ mt: 2, width: { xs: '100%', sm: 'auto' } }}
-        >
-          Thanks! You&apos;re on the waitlist. We will notify you when we
-          launch.
+        <Alert severity="success" sx={{ mt: 2, width: { xs: '100%', sm: 'auto' } }}>
+          Thanks! You&apos;re on the waitlist. We will notify you when we launch.
         </Alert>
       )}
       {status === 'error' && (
-        <Alert
-          severity="error"
-          sx={{ mt: 2, width: { xs: '100%', sm: 'auto' } }}
-        >
+        <Alert severity="error" sx={{ mt: 2, width: { xs: '100%', sm: 'auto' } }}>
           Error: {errorMsg}
         </Alert>
       )}
@@ -120,8 +110,8 @@ export function HeroWaitlist() {
       <Box
         component="form"
         onSubmit={(e) => {
-          e.preventDefault()
-          handleSubmit()
+          e.preventDefault();
+          handleSubmit();
         }}
         sx={{
           display: 'flex',
@@ -138,9 +128,7 @@ export function HeroWaitlist() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           error={email !== '' && !isValidEmail}
-          helperText={
-            email !== '' && !isValidEmail ? 'Please enter a valid email' : ''
-          }
+          helperText={email !== '' && !isValidEmail ? 'Please enter a valid email' : ''}
           sx={{
             bgcolor: 'rgba(255,255,255,0.1)',
             borderRadius: 1,
@@ -178,15 +166,15 @@ export function HeroWaitlist() {
         )}
       </Box>
     </Box>
-  )
+  );
 }
 
 type HeroSectionProps = {
-  title: string
-  subtitle: string
-  imageUrl: string
-  imageAlt?: string
-}
+  title: string;
+  subtitle: string;
+  imageUrl: string;
+  imageAlt?: string;
+};
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   title,
@@ -209,10 +197,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       {/* Updated Grid v2 usage: no item prop, use size for breakpoints */}
       <Grid container spacing={4} alignItems="center" sx={{ width: '100%' }}>
         {/* Image Column */}
-        <Grid
-          size={{ xs: 12, md: 6 }}
-          sx={{ textAlign: 'center', p: { xs: 2, md: 0 } }}
-        >
+        <Grid size={{ xs: 12, md: 6 }} sx={{ textAlign: 'center', p: { xs: 2, md: 0 } }}>
           <Image
             src={imageUrl}
             alt={imageAlt}
@@ -266,5 +251,5 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </Grid>
       </Grid>
     </Box>
-  )
-}
+  );
+};

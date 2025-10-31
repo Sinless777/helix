@@ -4,7 +4,7 @@
  * Also supports Sass syntax and Emotion (css prop) usage
  */
 
-export default {
+const config = {
   plugins: {
     '@tailwindcss/postcss': {},
 
@@ -17,4 +17,6 @@ export default {
     // autoprefixer for vendor prefixes
     autoprefixer: {},
   },
-}
+};
+
+export default config;

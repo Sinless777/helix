@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import * as React from 'react'
-import { SignInButton as ClerkSignInButton } from '@clerk/nextjs'
-import Button from '@mui/material/Button'
-import { useTheme } from '@mui/material/styles'
+import { SignInButton as ClerkSignInButton } from '@clerk/nextjs';
+import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
+import * as React from 'react';
 
 /**
  * Custom themed SignInButton that matches Helix AI's design system.
@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material/styles'
  * - Automatically adapts to light/dark mode via the MUI palette.
  */
 export function SignInButton() {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <ClerkSignInButton mode="modal">
@@ -37,7 +37,7 @@ export function SignInButton() {
         Sign In
       </Button>
     </ClerkSignInButton>
-  )
+  );
 }
 
-export default SignInButton
+export default SignInButton;

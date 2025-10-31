@@ -1,7 +1,13 @@
 // components/users/Profile/sidebar.tsx
-"use client";
+'use client';
 
-import * as React from "react";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import SettingsIcon from '@mui/icons-material/Settings';
+import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import {
   Badge,
   Box,
@@ -10,18 +16,19 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-} from "@mui/material";
-import type { SxProps } from "@mui/material";
-import type { Theme } from "@mui/material/styles";
-import CreditCardIcon from "@mui/icons-material/CreditCard";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import SettingsIcon from "@mui/icons-material/Settings";
-import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+} from '@mui/material';
+import type { SxProps } from '@mui/material';
+import type { Theme } from '@mui/material/styles';
+import * as React from 'react';
 
-type Key = "profile" | "dashboard" | "accounts" | "payments" | "subscriptions" | "support" | "settings";
+type Key =
+  | 'profile'
+  | 'dashboard'
+  | 'accounts'
+  | 'payments'
+  | 'subscriptions'
+  | 'support'
+  | 'settings';
 
 export interface SidebarItem {
   key: Key;
@@ -50,14 +57,13 @@ export interface ProfileSidebarProps {
 
 export default function ProfileSidebar({
   items = [
-    { key: "profile", label: "Profile" },
-    { key: "accounts", label: "Accounts" },
-    { key: "payments", label: "Payments" },
-    { key: "subscriptions", label: "Subscriptions" },
-    { key: "support", label: "Support Tickets" },
-    { key: "settings", label: "Settings" },
+    { key: 'profile', label: 'Profile' },
+    { key: 'payments', label: 'Payments' },
+    { key: 'subscriptions', label: 'Subscriptions' },
+    { key: 'support', label: 'Support Tickets' },
+    { key: 'settings', label: 'Settings' },
   ],
-  active = "profile",
+  active = 'profile',
   onNavigate,
   counts,
   embedded,
@@ -68,7 +74,7 @@ export default function ProfileSidebar({
       sx={{
         ...(embedded
           ? {
-              bgcolor: "transparent",
+              bgcolor: 'transparent',
               p: 1,
             }
           : {
@@ -80,7 +86,7 @@ export default function ProfileSidebar({
     >
       <Typography
         variant="subtitle2"
-        sx={{ opacity: 0.85, px: 1, pb: 0.75, display: "flex", alignItems: "center", gap: 1 }}
+        sx={{ opacity: 0.85, px: 1, pb: 0.75, display: 'flex', alignItems: 'center', gap: 1 }}
       >
         <DashboardCustomizeIcon fontSize="small" /> My dashboard
       </Typography>
@@ -90,7 +96,7 @@ export default function ProfileSidebar({
           const Icon = ICONS[item.key] ?? ICONS.dashboard;
           const selected = active === item.key;
           const badge =
-            item.key === "support" && counts?.supportTickets ? counts.supportTickets : item.badge;
+            item.key === 'support' && counts?.supportTickets ? counts.supportTickets : item.badge;
 
           return (
             <ListItemButton
@@ -101,16 +107,22 @@ export default function ProfileSidebar({
                 mx: 0.5,
                 my: 0.5,
                 borderRadius: 2,
-                "&.Mui-selected": {
-                  bgcolor: "action.selected",
+                '&.Mui-selected': {
+                  bgcolor: 'action.selected',
                 },
               }}
             >
-              <ListItemIcon sx={{ minWidth: 36, color: "inherit" }}>
-                {badge ? <Badge color="secondary" badgeContent={badge}>{Icon}</Badge> : Icon}
+              <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}>
+                {badge ? (
+                  <Badge color="secondary" badgeContent={badge}>
+                    {Icon}
+                  </Badge>
+                ) : (
+                  Icon
+                )}
               </ListItemIcon>
               <ListItemText
-                primaryTypographyProps={{ variant: "body2", fontWeight: 600 }}
+                primaryTypographyProps={{ variant: 'body2', fontWeight: 600 }}
                 primary={item.label}
               />
             </ListItemButton>

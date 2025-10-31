@@ -1,38 +1,30 @@
-'use client'
+'use client';
 
-import {
-  Box,
-  Button,
-  List,
-  ListItem,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material'
-import Image from 'next/image'
-import NextLink from 'next/link'
-import React from 'react'
+import { Box, Button, List, ListItem, Stack, Typography, useTheme } from '@mui/material';
+import Image from 'next/image';
+import NextLink from 'next/link';
+import React from 'react';
 
 export interface ListItemProps {
-  text: string
-  href: string
-  target?: React.HTMLAttributeAnchorTarget
-  role: string
-  detailedDescription: string
-  icon?: string
-  image?: string
+  text: string;
+  href: string;
+  target?: React.HTMLAttributeAnchorTarget;
+  role: string;
+  detailedDescription: string;
+  icon?: string;
+  image?: string;
 }
 
 export interface CardProps {
-  title: string
-  description: string
-  listItems?: ListItemProps[]
-  image: string
-  link: string
-  buttonText?: string
-  quote?: string
-  aspectRatio?: string
-  sx?: object
+  title: string;
+  description: string;
+  listItems?: ListItemProps[];
+  image: string;
+  link: string;
+  buttonText?: string;
+  quote?: string;
+  aspectRatio?: string;
+  sx?: object;
 }
 
 export const HelixCard: React.FC<CardProps> = ({
@@ -45,7 +37,7 @@ export const HelixCard: React.FC<CardProps> = ({
   quote,
   sx,
 }) => {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <Box
@@ -125,10 +117,7 @@ export const HelixCard: React.FC<CardProps> = ({
           <Box sx={{ maxHeight: '10.5rem', overflowY: 'auto' }}>
             <List disablePadding sx={{ textAlign: 'center' }}>
               {listItems.map((item, idx) => (
-                <ListItem
-                  key={idx}
-                  sx={{ display: 'list-item', justifyContent: 'center', p: 0 }}
-                >
+                <ListItem key={idx} sx={{ display: 'list-item', justifyContent: 'center', p: 0 }}>
                   <Button
                     component="a"
                     href={item.href}
@@ -187,9 +176,7 @@ export const HelixCard: React.FC<CardProps> = ({
               variant="contained"
               sx={{
                 bgcolor: 'secondary.main',
-                color: theme.palette.getContrastText(
-                  theme.palette.secondary.main
-                ),
+                color: theme.palette.getContrastText(theme.palette.secondary.main),
                 fontFamily: '"Mate SC", serif',
               }}
               aria-label={`Learn more about ${title}`}
@@ -200,7 +187,7 @@ export const HelixCard: React.FC<CardProps> = ({
         </Box>
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default HelixCard
+export default HelixCard;
