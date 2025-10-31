@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'https://optimum-dinosaur-24.clerk.accounts.dev'
+        hostname: 'optimum-dinosaur-24.clerk.accounts.dev'
       }
     ],
     formats: ['image/avif', 'image/webp'],
