@@ -9,13 +9,13 @@ const statusLiteral = v.union(
   v.literal('IN_PROGRESS'),
   v.literal('RESOLVED'),
   v.literal('CLOSED'),
-  v.literal('ESCALATED'),
+  v.literal('ESCALATED')
 );
 
 const categoryLiteral = v.union(
   v.literal('BUG'),
   v.literal('FEATURE_REQUEST'),
-  v.literal('OTHER'),
+  v.literal('OTHER')
   // add more categories here as needed: e.g. 'ACCOUNT', 'BILLING', 'INTEGRATION'
 );
 
@@ -29,7 +29,8 @@ export default defineTable({
   assigneeId: v.optional(v.string()),
   createdAt: v.number(),
   updatedAt: v.number(),
-}).index('by_ticketId', ['id'])
+})
+  .index('by_ticketId', ['id'])
   .index('by_userId', ['userId', 'createdAt'])
   .index('by_status', ['status', 'createdAt'])
   .index('by_category', ['category', 'createdAt'])

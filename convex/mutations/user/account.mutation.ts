@@ -1,9 +1,10 @@
 // convex/mutations/user/account.mutation.ts
 // Exposes account linking/unlinking helpers as Convex mutations.
 
-import { mutation } from '../../_generated/server'
-import { v } from 'convex/values'
-import { unlinkAccount, upsertAccount } from '../../functions/user/account.funcs'
+import { v } from 'convex/values';
+
+import { mutation } from '../../_generated/server';
+import { unlinkAccount, upsertAccount } from '../../functions/user/account.funcs';
 
 export const link = mutation({
   args: {
@@ -15,9 +16,9 @@ export const link = mutation({
     status: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await upsertAccount(ctx, args)
+    return await upsertAccount(ctx, args);
   },
-})
+});
 
 export const unlink = mutation({
   args: {
@@ -26,6 +27,6 @@ export const unlink = mutation({
     accountId: v.string(),
   },
   handler: async (ctx, args) => {
-    return await unlinkAccount(ctx, args)
+    return await unlinkAccount(ctx, args);
   },
-})
+});

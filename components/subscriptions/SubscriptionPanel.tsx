@@ -4,9 +4,9 @@
 // Displays subscription information pulled from Clerk metadata alongside a
 // Material UI shell.
 
-import * as React from 'react';
 import { SignedIn, SignedOut, SignInButton, useUser } from '@clerk/nextjs';
 import { Alert, Box, Button, Card, CardContent, Stack, Typography } from '@mui/material';
+import * as React from 'react';
 
 function SubscriptionDetails() {
   const { user } = useUser();

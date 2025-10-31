@@ -2,10 +2,11 @@
 // Surface where a member can manage the external accounts they have linked to
 // Helix. Links to the AccountsManager client component for interactivity.
 
+import { auth } from '@clerk/nextjs/server';
+import { Container, Stack, Typography } from '@mui/material';
 import type { Metadata, Route } from 'next';
 import { redirect } from 'next/navigation';
-import { Container, Stack, Typography } from '@mui/material';
-import { auth } from '@clerk/nextjs/server';
+
 import AccountsManager from '@/components/settings/AccountsManager';
 import { getLinkedAccounts } from '@/lib/users/accounts';
 
@@ -29,7 +30,8 @@ export default async function AccountConnectionsPage(props: PageProps) {
   const userId = authResult?.userId;
 
   if (!userId) {
-    const destination = `/sign-in?redirect_url=/${encodeURIComponent(routeUserId)}/settings/accounts` as Route;
+    const destination =
+      `/sign-in?redirect_url=/${encodeURIComponent(routeUserId)}/settings/accounts` as Route;
     redirect(destination);
   }
 

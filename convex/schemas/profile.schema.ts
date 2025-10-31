@@ -1,5 +1,5 @@
-import { defineTable } from 'convex/server'
-import { v } from 'convex/values'
+import { defineTable } from 'convex/server';
+import { v } from 'convex/values';
 
 export default defineTable({
   userId: v.string(),
@@ -13,4 +13,4 @@ export default defineTable({
   role: v.optional(v.string()),
   createdAt: v.number(),
   updatedAt: v.number(),
-}).index('by_userId', ['userId'])
+}).index('by_userId', ['userId']);

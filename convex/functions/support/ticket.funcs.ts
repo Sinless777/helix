@@ -1,10 +1,10 @@
 // convex/functions/support/ticket.funcs.ts
 // Shared ticket logic for Helix: create, update, list tickets, plus GitHub escalation.
 
-import type { MutationCtx, QueryCtx } from '../../_generated/server';
-import type { Doc, Id } from '../../_generated/dataModel';
-import { ticketStatuses, type TicketStatus } from '../../../content/constants/tickets';
 import { roleRank, type Role } from '../../../content/constants/roles';
+import { ticketStatuses, type TicketStatus } from '../../../content/constants/tickets';
+import type { Doc, Id } from '../../_generated/dataModel';
+import type { MutationCtx, QueryCtx } from '../../_generated/server';
 
 type TicketCategory = 'BUG' | 'FEATURE_REQUEST' | 'OTHER';
 
@@ -37,7 +37,10 @@ function assertStatus(status: string): asserts status is TicketStatus {
   }
 }
 
-async function fetchProfileDoc(ctx: QueryCtx | MutationCtx, userId: string): Promise<ProfileDoc | null> {
+async function fetchProfileDoc(
+  ctx: QueryCtx | MutationCtx,
+  userId: string
+): Promise<ProfileDoc | null> {
   const doc = await ctx.db
     .query('profiles')
     .withIndex('by_userId', (q) => q.eq('userId', userId))
@@ -211,9 +214,7 @@ export async function list(
   // Choose the most selective usable index first; fallback to fullTableScan when needed.
   const qi = ctx.db.query('tickets');
 
-  let q:
-    | ReturnType<typeof qi.withIndex>
-    | ReturnType<typeof qi.fullTableScan>;
+  let q: ReturnType<typeof qi.withIndex> | ReturnType<typeof qi.fullTableScan>;
 
   if (args.scope === 'mine') {
     // Primary index: by_userId

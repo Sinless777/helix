@@ -3,10 +3,11 @@
 // components/ui/GlassCard.tsx
 // Reusable glassmorphism card that pulls colors from the theme constants.
 
-import * as React from 'react';
 import { Box } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import * as React from 'react';
+
 import { themes } from '@/content/constants/theme';
 
 export interface GlassCardProps {

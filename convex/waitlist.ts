@@ -1,2 +1,2 @@
 // convex/waitlist.ts
-export { add } from './mutations/user/waitlist.mutation'
+export { add } from './mutations/user/waitlist.mutation';

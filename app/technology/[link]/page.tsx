@@ -1,48 +1,48 @@
 // app/technology/[link]/page.tsx
-import React from 'react'
-import type { Metadata } from 'next'
-import Header from '@/components/Header'
-import HelixCard from '@/components/Card'
-import type { CardProps, ListItemProps } from '@/components/Card'
-import * as technology from '@/content/technology'
-import { headerProps } from '@/content/header'
+import { Box, Button, Container, Grid, Typography } from '@mui/material';
+import type { Metadata } from 'next';
+import React from 'react';
 
-import { Box, Button, Container, Grid, Typography } from '@mui/material'
+import HelixCard from '@/components/Card';
+import type { CardProps, ListItemProps } from '@/components/Card';
+import Header from '@/components/Header';
+import { headerProps } from '@/content/header';
+import * as technology from '@/content/technology';
 
 type PageProps = {
   // In Next.js 16, `params` is a Promise — unwrap with `await` or React.use()
-  params: Promise<{ link: string }>
-}
+  params: Promise<{ link: string }>;
+};
 
 // Ensure leading slash + lowercase for robust comparisons
 function norm(path: string) {
-  const p = path.startsWith('/') ? path : `/${path}`
-  return p.toLowerCase()
+  const p = path.startsWith('/') ? path : `/${path}`;
+  return p.toLowerCase();
 }
 
 function getAllCards(): CardProps[] {
-  return (Object.values(technology).flat() as CardProps[]).filter(Boolean)
+  return (Object.values(technology).flat() as CardProps[]).filter(Boolean);
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { link } = await params
-  const slug = decodeURIComponent(link || '')
-  const target = norm(`/technology/${slug}`)
-  const card = getAllCards().find(c => norm(c.link ?? '') === target)
+  const { link } = await params;
+  const slug = decodeURIComponent(link || '');
+  const target = norm(`/technology/${slug}`);
+  const card = getAllCards().find((c) => norm(c.link ?? '') === target);
 
   return {
     title: card?.title ?? 'Technology',
     description: card?.description ?? 'Explore Helix AI technologies.',
-  }
+  };
 }
 
 export default async function Page({ params }: PageProps) {
-  const { link } = await params
-  const slug = decodeURIComponent(link || '')
-  const target = norm(`/technology/${slug}`)
+  const { link } = await params;
+  const slug = decodeURIComponent(link || '');
+  const target = norm(`/technology/${slug}`);
 
-  const allCards = getAllCards()
-  const matchedCard = allCards.find(c => norm(c.link ?? '') === target)
+  const allCards = getAllCards();
+  const matchedCard = allCards.find((c) => norm(c.link ?? '') === target);
 
   if (!matchedCard) {
     return (
@@ -62,10 +62,10 @@ export default async function Page({ params }: PageProps) {
           </Box>
         </Container>
       </main>
-    )
+    );
   }
 
-  const { title, description, listItems } = matchedCard
+  const { title, description, listItems } = matchedCard;
 
   return (
     <main>
@@ -148,5 +148,5 @@ export default async function Page({ params }: PageProps) {
         </Container>
       </Box>
     </main>
-  )
+  );
 }

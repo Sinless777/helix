@@ -1,10 +1,11 @@
 // hooks/useNotifications.ts
-import type { Id } from "@/convex/_generated/dataModel";  // adjust path to match your project
-import { useQuery, useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { useQuery, useMutation } from 'convex/react';
+
+import { api } from '@/convex/_generated/api';
+import type { Id } from '@/convex/_generated/dataModel'; // adjust path to match your project
 
 export type Notification = {
-  _id: Id<"notifications">;
+  _id: Id<'notifications'>;
   userId: string;
   title: string;
   message: string;
@@ -19,8 +20,7 @@ export function useNotifications(userId: string) {
   const notifications = useQuery(api.notifications.listAllNotifications, { userId }) ?? [];
   const markReadMutation = useMutation(api.notifications.markAsRead);
 
-  const markRead = (notificationId: Id<"notifications">) =>
-    markReadMutation({ notificationId });
+  const markRead = (notificationId: Id<'notifications'>) => markReadMutation({ notificationId });
 
   return { notifications, markRead };
 }

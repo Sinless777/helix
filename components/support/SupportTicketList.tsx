@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import {
   Box,
   Button,
@@ -15,6 +14,8 @@ import {
   Typography,
   type SelectChangeEvent,
 } from '@mui/material';
+import * as React from 'react';
+
 import GlassCard from '@/components/ui/GlassCard';
 import type { SupportTicket } from '@/types/support';
 
@@ -234,8 +235,8 @@ export default function SupportTicketList({
                         ticket.category === 'BUG'
                           ? 'Bug'
                           : ticket.category === 'FEATURE_REQUEST'
-                          ? 'Feature'
-                          : 'Other'
+                            ? 'Feature'
+                            : 'Other'
                       }
                       color={categoryColor(ticket.category as TicketCategory)}
                       size="small"

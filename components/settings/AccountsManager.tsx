@@ -5,7 +5,8 @@
 // Convex `accounts` table. The UI stays intentionally lightweight so provider
 // specific flows can be layered on later.
 
-import * as React from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {
   Alert,
   Box,
@@ -23,9 +24,9 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import AddIcon from '@mui/icons-material/Add';
 import { useMutation } from 'convex/react';
+import * as React from 'react';
+
 import { api } from '@/convex/_generated/api';
 import type { LinkedAccount } from '@/lib/users/accounts';
 
@@ -80,8 +81,8 @@ export default function AccountsManager({ userId, initialAccounts }: AccountsMan
     setDialogOpen(false);
   };
 
-  const handleFieldChange = (key: keyof AccountDraft) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFieldChange =
+    (key: keyof AccountDraft) => (event: React.ChangeEvent<HTMLInputElement>) => {
       setDraft((prev) => ({ ...prev, [key]: event.target.value }));
     };
 
@@ -117,7 +118,7 @@ export default function AccountsManager({ userId, initialAccounts }: AccountsMan
       setAccounts((prev) => {
         const previous = prev.find(
           (existing) =>
-            existing.provider === payload.provider && existing.accountId === payload.accountId,
+            existing.provider === payload.provider && existing.accountId === payload.accountId
         );
 
         const next: LinkedAccount = {
@@ -135,7 +136,7 @@ export default function AccountsManager({ userId, initialAccounts }: AccountsMan
 
         const filtered = prev.filter(
           (existing) =>
-            !(existing.provider === payload.provider && existing.accountId === payload.accountId),
+            !(existing.provider === payload.provider && existing.accountId === payload.accountId)
         );
         return [...filtered, next];
       });
@@ -161,8 +162,8 @@ export default function AccountsManager({ userId, initialAccounts }: AccountsMan
       setAccounts((prev) =>
         prev.filter(
           (existing) =>
-            !(existing.provider === account.provider && existing.accountId === account.accountId),
-        ),
+            !(existing.provider === account.provider && existing.accountId === account.accountId)
+        )
       );
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unable to unlink account.';
@@ -184,7 +185,12 @@ export default function AccountsManager({ userId, initialAccounts }: AccountsMan
               Connect external services so Helix can access them securely.
             </Typography>
           </Box>
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={handleOpenDialog}>
+          <Button
+            variant="contained"
+            size="small"
+            startIcon={<AddIcon />}
+            onClick={handleOpenDialog}
+          >
             Link account
           </Button>
         </Stack>
@@ -210,11 +216,7 @@ export default function AccountsManager({ userId, initialAccounts }: AccountsMan
                     {account.displayName}
                   </Typography>
                   <Tooltip title="Unlink">
-                    <IconButton
-                      size="small"
-                      onClick={() => handleUnlink(account)}
-                      disabled={busy}
-                    >
+                    <IconButton size="small" onClick={() => handleUnlink(account)} disabled={busy}>
                       <DeleteOutlineIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
@@ -246,7 +248,11 @@ export default function AccountsManager({ userId, initialAccounts }: AccountsMan
       <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="sm">
         <DialogTitle>Link account</DialogTitle>
         <DialogContent>
-          {error ? <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert> : null}
+          {error ? (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          ) : null}
           <Stack component="form" id="account-link-form" onSubmit={handleSubmit} spacing={2}>
             <TextField
               label="Provider"
@@ -272,23 +278,14 @@ export default function AccountsManager({ userId, initialAccounts }: AccountsMan
               value={draft.managementUrl}
               onChange={handleFieldChange('managementUrl')}
             />
-            <TextField
-              label="Status"
-              value={draft.status}
-              onChange={handleFieldChange('status')}
-            />
+            <TextField label="Status" value={draft.status} onChange={handleFieldChange('status')} />
           </Stack>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} disabled={busy}>
             Cancel
           </Button>
-          <Button
-            type="submit"
-            form="account-link-form"
-            variant="contained"
-            disabled={busy}
-          >
+          <Button type="submit" form="account-link-form" variant="contained" disabled={busy}>
             {busy ? 'Saving…' : 'Link account'}
           </Button>
         </DialogActions>

@@ -1,10 +1,11 @@
 // app/[user-id]/payments/page.tsx
 // Payment settings landing page using Clerk context for authentication.
 
+import { auth } from '@clerk/nextjs/server';
+import { Container, Stack, Typography } from '@mui/material';
 import type { Metadata, Route } from 'next';
 import { redirect } from 'next/navigation';
-import { Container, Stack, Typography } from '@mui/material';
-import { auth } from '@clerk/nextjs/server';
+
 import PaymentsPanel from '@/components/payments/PaymentsPanel';
 
 export const metadata: Metadata = {
@@ -27,7 +28,8 @@ export default async function PaymentsPage(props: PageProps) {
   const userId = authResult?.userId;
 
   if (!userId) {
-    const destination = `/sign-in?redirect_url=/${encodeURIComponent(routeUserId)}/payments` as Route;
+    const destination =
+      `/sign-in?redirect_url=/${encodeURIComponent(routeUserId)}/payments` as Route;
     redirect(destination);
   }
 

@@ -8,17 +8,17 @@ export type OAuthProviderKey =
   | 'facebook'
   | 'twitch'
   | 'steam'
-  | 'epicGames'
+  | 'epicGames';
 
 export interface OAuthProviderConfig {
-  name: string
-  authorizationEndpoint: string
-  tokenEndpoint: string
-  userInfoEndpoint: string
-  scopes: string[]
-  clientIdEnv: string
-  clientSecretEnv: string
-  redirectPath: string
+  name: string;
+  authorizationEndpoint: string;
+  tokenEndpoint: string;
+  userInfoEndpoint: string;
+  scopes: string[];
+  clientIdEnv: string;
+  clientSecretEnv: string;
+  redirectPath: string;
 }
 
 export const oauthProviders: Record<OAuthProviderKey, OAuthProviderConfig> = {
@@ -92,4 +92,4 @@ export const oauthProviders: Record<OAuthProviderKey, OAuthProviderConfig> = {
     clientSecretEnv: 'EPIC_OAUTH_CLIENT_SECRET',
     redirectPath: '/api/oauth/epicGames/callback',
   },
-}
+};

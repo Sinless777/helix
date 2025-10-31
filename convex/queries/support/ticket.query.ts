@@ -1,8 +1,9 @@
 // convex/queries/support/ticket.query.ts
 // Public ticket queries for dashboards and user history.
 
-import { query } from '../../_generated/server';
 import { v } from 'convex/values';
+
+import { query } from '../../_generated/server';
 import { list as listTickets } from '../../functions/support/ticket.funcs';
 
 // Allowed elevated roles for "all" access or cross-user access:
@@ -20,24 +21,20 @@ async function getRequesterRole(ctx: any, userId: string): Promise<string | null
 
 export const list = query({
   args: {
-    requesterId: v.string(),                             // the user making the request
+    requesterId: v.string(), // the user making the request
     scope: v.union(v.literal('mine'), v.literal('all')), // 'mine' or 'all'
-    targetUserId: v.optional(v.string()),                // only for scope='all'
+    targetUserId: v.optional(v.string()), // only for scope='all'
     status: v.optional(
       v.union(
         v.literal('OPEN'),
         v.literal('IN_PROGRESS'),
         v.literal('RESOLVED'),
         v.literal('CLOSED'),
-        v.literal('ESCALATED'),
-      ),
+        v.literal('ESCALATED')
+      )
     ),
     category: v.optional(
-      v.union(
-        v.literal('BUG'),
-        v.literal('FEATURE_REQUEST'),
-        v.literal('OTHER'),
-      ),
+      v.union(v.literal('BUG'), v.literal('FEATURE_REQUEST'), v.literal('OTHER'))
     ),
     limit: v.optional(v.number()), // pagination size (handled in funcs)
     // NOTE: removed 'after' because current listTickets implementation does not use a cursor
@@ -66,8 +63,8 @@ export const list = query({
 
 export const getById = query({
   args: {
-    ticketId: v.string(),     // external ticket id stored in tickets.id
-    requesterId: v.string(),  // requester for access control
+    ticketId: v.string(), // external ticket id stored in tickets.id
+    requesterId: v.string(), // requester for access control
   },
   handler: async (ctx, { ticketId, requesterId }) => {
     // Fetch the ticket by external id via your unique index 'by_ticketId'

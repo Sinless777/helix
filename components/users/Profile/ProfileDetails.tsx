@@ -1,26 +1,18 @@
 'use client';
 
+import { Alert, Box, Button, Divider, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { useMutation } from 'convex/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  Divider,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { useMutation } from 'convex/react';
-import { encryptJson } from '@/lib/security/encrypt.util';
+
+import GlassCard from '@/components/ui/GlassCard';
 import PrimitiveModal from '@/components/users/ui/modal';
+import { Country } from '@/content/constants/profile/country.enum';
 import { Gender, GenderValues } from '@/content/constants/profile/gender.enum';
+import { GradeLevel, GradeLevelValues } from '@/content/constants/profile/grade-level.enum';
 import { Sex, SexValues } from '@/content/constants/profile/sex.enum';
 import { Sexuality, SexualityValues } from '@/content/constants/profile/sexuality.enum';
-import { GradeLevel, GradeLevelValues } from '@/content/constants/profile/grade-level.enum';
-import { Country } from '@/content/constants/profile/country.enum';
-import GlassCard from '@/components/ui/GlassCard';
+import { encryptJson } from '@/lib/security/encrypt.util';
 
 const BIO_MAX_LENGTH = 10_000;
 type MailingAddress = {
@@ -92,7 +84,7 @@ type ProfileDetailsProps = {
 function isOption<T extends string>(
   value: string | null | undefined,
   options: readonly T[],
-  fallback: T,
+  fallback: T
 ): T {
   return value && options.includes(value as T) ? (value as T) : fallback;
 }
@@ -100,9 +92,7 @@ function isOption<T extends string>(
 function createFormState(profile: ProfileBasics): FormState {
   const countryOptions = Object.values(Country) as string[];
   const safeCountry =
-    profile.country && countryOptions.includes(profile.country)
-      ? profile.country
-      : Country.Other;
+    profile.country && countryOptions.includes(profile.country) ? profile.country : Country.Other;
 
   const gradeFallback =
     GradeLevelValues.find((value) => value === GradeLevel.PreferNotToSay) ??
@@ -171,9 +161,7 @@ function hasMailingAddress(address: MailingAddress) {
 }
 
 function startCase(input: string) {
-  return input
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+  return input.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function formatGradeLabel(value: string) {
@@ -190,13 +178,7 @@ function formatIdentityLabel(value: string | undefined) {
 }
 
 function formatMailingAddress(address: MailingAddress) {
-  const parts = [
-    address.street,
-    address.city,
-    address.state,
-    address.postalCode,
-    address.country,
-  ]
+  const parts = [address.street, address.city, address.state, address.postalCode, address.country]
     .map((part) => part.trim())
     .filter(Boolean);
 
@@ -207,12 +189,7 @@ function formatMailingAddress(address: MailingAddress) {
   return parts.join(', ');
 }
 
-export function ProfileDetails({
-  user,
-  profile,
-  canEdit,
-  isAuthenticated,
-}: ProfileDetailsProps) {
+export function ProfileDetails({ user, profile, canEdit, isAuthenticated }: ProfileDetailsProps) {
   const [profileData, setProfileData] = useState<FormState>(() => createFormState(profile));
   const [draft, setDraft] = useState<FormState>(() => createFormState(profile));
   const [open, setOpen] = useState(false);
@@ -229,7 +206,9 @@ export function ProfileDetails({
   useEffect(() => {
     if (!canEdit) return;
     const available = Array.isArray(profile.features)
-      ? profile.features.map((feature) => feature?.toString().trim()).filter((feature) => feature && feature.length > 0)
+      ? profile.features
+          .map((feature) => feature?.toString().trim())
+          .filter((feature) => feature && feature.length > 0)
       : [];
     const key = available.slice().sort().join('|');
     if (syncedFeaturesRef.current === key) return;
@@ -250,11 +229,7 @@ export function ProfileDetails({
   const countryOptions = useMemo(() => Object.values(Country) as string[], []);
 
   const displayName = useMemo(() => {
-    const segments = [
-      profileData.firstName,
-      profileData.middleName,
-      profileData.lastName,
-    ]
+    const segments = [profileData.firstName, profileData.middleName, profileData.lastName]
       .map((segment) => segment.trim())
       .filter(Boolean);
 
@@ -272,9 +247,7 @@ export function ProfileDetails({
     });
   }, [user.createdAt]);
 
-  const displayedBio = canViewSensitive
-    ? profileData.bio || user.bio || user.about || ''
-    : '';
+  const displayedBio = canViewSensitive ? profileData.bio || user.bio || user.about || '' : '';
 
   const handleOpen = useCallback(() => {
     if (!canEdit) return;
@@ -321,9 +294,7 @@ export function ProfileDetails({
 
         const encryptedPayload = {
           ...trimmed,
-          mailingAddress: hasMailingAddress(trimmed.mailingAddress)
-            ? trimmed.mailingAddress
-            : null,
+          mailingAddress: hasMailingAddress(trimmed.mailingAddress) ? trimmed.mailingAddress : null,
         };
 
         const { ciphertext, iv } = await encryptJson(encryptedPayload, profileKey);
@@ -361,18 +332,22 @@ export function ProfileDetails({
         setIsSaving(false);
       }
     },
-    [canEdit, draft, isSaving, profile.userId, profileKey, saveEncryptedProfile],
+    [canEdit, draft, isSaving, profile.userId, profileKey, saveEncryptedProfile]
   );
 
   const handleTextChange = useCallback(
-    (key: Exclude<keyof FormState, 'mailingAddress' | 'gender' | 'sex' | 'sexuality' | 'gradeLevel' | 'country'>) =>
+    (
+      key: Exclude<
+        keyof FormState,
+        'mailingAddress' | 'gender' | 'sex' | 'sexuality' | 'gradeLevel' | 'country'
+      >
+    ) =>
       (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const value = key === 'bio'
-          ? event.target.value.slice(0, BIO_MAX_LENGTH)
-          : event.target.value;
+        const value =
+          key === 'bio' ? event.target.value.slice(0, BIO_MAX_LENGTH) : event.target.value;
         setDraft((prev) => ({ ...prev, [key]: value }));
       },
-    [],
+    []
   );
 
   const handleSelectChange = useCallback(
@@ -381,19 +356,18 @@ export function ProfileDetails({
         const value = event.target.value;
         setDraft((prev) => ({ ...prev, [key]: value }));
       },
-    [],
+    []
   );
 
   const handleMailingAddressChange = useCallback(
-    (key: keyof MailingAddress) =>
-      (event: ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setDraft((prev) => ({
-          ...prev,
-          mailingAddress: { ...prev.mailingAddress, [key]: value },
-        }));
-      },
-    [],
+    (key: keyof MailingAddress) => (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setDraft((prev) => ({
+        ...prev,
+        mailingAddress: { ...prev.mailingAddress, [key]: value },
+      }));
+    },
+    []
   );
 
   const identityRows = [
@@ -419,7 +393,10 @@ export function ProfileDetails({
 
   return (
     <>
-      <GlassCard component="section" sx={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <GlassCard
+        component="section"
+        sx={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 2 }}
+      >
         <Stack direction="row" spacing={2} alignItems="center">
           {user.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -560,12 +537,7 @@ export function ProfileDetails({
             </Stack>
           }
         >
-          <Stack
-            id="edit-profile-form"
-            component="form"
-            onSubmit={handleSubmit}
-            spacing={3}
-          >
+          <Stack id="edit-profile-form" component="form" onSubmit={handleSubmit} spacing={3}>
             {submitError ? (
               <Alert severity="error" onClose={() => setSubmitError(null)}>
                 {submitError}

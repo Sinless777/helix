@@ -1,8 +1,8 @@
 'use client';
 
+import AnnouncementIcon from '@mui/icons-material/Announcement';
 import { Alert, AlertTitle } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material/styles';
-import AnnouncementIcon from '@mui/icons-material/Announcement';
 import { alpha } from '@mui/material/styles';
 
 type DevelopmentBannerProps = {
@@ -28,9 +28,7 @@ export function DevelopmentBanner({
             ? alpha(theme.palette.info.light, 0.12)
             : alpha(theme.palette.info.light, 0.3),
         color: (theme) =>
-          theme.palette.mode === 'dark'
-            ? theme.palette.info.light
-            : theme.palette.text.primary,
+          theme.palette.mode === 'dark' ? theme.palette.info.light : theme.palette.text.primary,
         ...sx,
       }}
     >

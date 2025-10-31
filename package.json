@@ -10,7 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "pnpx prettier --check --write . && pnpx eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "typecheck": "tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck",
     "clean": "rimraf .next dist build coverage *.tsbuildinfo",

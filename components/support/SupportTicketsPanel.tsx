@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import {
   Alert,
   Box,
@@ -14,6 +13,8 @@ import {
   Typography,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import * as React from 'react';
+
 import SupportTicketForm from '@/components/support/SupportTicketForm';
 import SupportTicketList from '@/components/support/SupportTicketList';
 import type { SupportTicket } from '@/types/support';
@@ -130,7 +131,7 @@ export default function SupportTicketsPanel({
     (href: string) => {
       (router as any).push(href);
     },
-    [router],
+    [router]
   );
 
   // Optional row open -> navigate
@@ -140,7 +141,7 @@ export default function SupportTicketsPanel({
       const href = `${detailRouteBase}/${encodeURIComponent(t.id)}`;
       go(href);
     },
-    [detailRouteBase, go],
+    [detailRouteBase, go]
   );
 
   // Optimistic status updates
@@ -150,7 +151,7 @@ export default function SupportTicketsPanel({
 
       const prev = tickets;
       const next = tickets.map((t) =>
-        t.id === ticket.id ? { ...t, status: nextStatus, updatedAt: Date.now() } : t,
+        t.id === ticket.id ? { ...t, status: nextStatus, updatedAt: Date.now() } : t
       );
 
       setUpdatingId(ticket.id);
@@ -173,14 +174,13 @@ export default function SupportTicketsPanel({
       } catch (err) {
         // rollback
         setTickets(prev);
-        const message =
-          err instanceof Error ? err.message : 'Unable to update ticket right now.';
+        const message = err instanceof Error ? err.message : 'Unable to update ticket right now.';
         setError(message);
       } finally {
         setUpdatingId(null);
       }
     },
-    [canModerate, tickets, updatingId],
+    [canModerate, tickets, updatingId]
   );
 
   // Build props for SupportTicketList while respecting exactOptionalPropertyTypes
@@ -270,12 +270,7 @@ export default function SupportTicketsPanel({
       </Stack>
 
       {/* New Ticket Dialog */}
-      <Dialog
-        open={newTicketOpen}
-        onClose={() => setNewTicketOpen(false)}
-        fullWidth
-        maxWidth="sm"
-      >
+      <Dialog open={newTicketOpen} onClose={() => setNewTicketOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ fontFamily: 'var(--font-pinyon)', fontSize: 28 }}>
           Create a new ticket
         </DialogTitle>

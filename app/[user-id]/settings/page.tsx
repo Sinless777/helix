@@ -2,10 +2,11 @@
 // Server component that loads a member's encrypted settings and renders the
 // client form for editing them.
 
+import { auth } from '@clerk/nextjs/server';
+import { Container, Stack, Typography } from '@mui/material';
 import type { Metadata, Route } from 'next';
 import { redirect } from 'next/navigation';
-import { Container, Stack, Typography } from '@mui/material';
-import { auth } from '@clerk/nextjs/server';
+
 import SettingsForm from '@/components/settings/SettingsForm';
 import { getUserSettings } from '@/lib/users/settings';
 
@@ -29,7 +30,8 @@ export default async function SettingsPage(props: PageProps) {
   const userId = authResult?.userId;
 
   if (!userId) {
-    const destination = `/sign-in?redirect_url=/${encodeURIComponent(routeUserId)}/settings` as Route;
+    const destination =
+      `/sign-in?redirect_url=/${encodeURIComponent(routeUserId)}/settings` as Route;
     redirect(destination);
   }
 

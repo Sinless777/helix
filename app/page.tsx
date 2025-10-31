@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import { DevelopmentBanner } from '@/components/development-banner'
-import Header from '@/components/Header'
-import { HeroSection } from '@/components/Waitlist'
-import { headerProps } from '@/content/header'
-import { cn } from '@/lib/utils'
+import { DevelopmentBanner } from '@/components/development-banner';
+import Header from '@/components/Header';
+import { HeroSection } from '@/components/Waitlist';
+import { headerProps } from '@/content/header';
+import { cn } from '@/lib/utils';
 
 const HERO_DATA = {
   title: 'Meet Helix AI — Your Intelligent Companion for a Smarter Digital Life',
   description:
     'Seamlessly connect, automate, and analyze with an AI assistant built to simplify tasks, enhance productivity, and empower your decisions across every platform you use.',
   imageUrl: 'https://cdn.sinlessgamesllc.com/Helix-AI/images/Helix_Logo.png',
-} as const
+} as const;
 
 export default function Index() {
   return (
@@ -43,5 +43,5 @@ export default function Index() {
         </div>
       </main>
     </div>
-  )
+  );
 }

@@ -1,34 +1,30 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    "schedule:weekly",
-    ":automergeDisabled"
-  ],
-  "dependencyDashboard": true,
-  "prHourlyLimit": 4,
-  "prConcurrentLimit": 8,
-  "timezone": "America/New_York",
-  "packageRules": [
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: ['config:recommended', 'schedule:weekly', ':automergeDisabled'],
+  dependencyDashboard: true,
+  prHourlyLimit: 4,
+  prConcurrentLimit: 8,
+  timezone: 'America/New_York',
+  packageRules: [
     {
-      "matchPackagePatterns": ["^@types/"],
-      "groupName": "TypeScript type definitions",
-      "automerge": true,
-      "automergeType": "branch"
+      matchPackagePatterns: ['^@types/'],
+      groupName: 'TypeScript type definitions',
+      automerge: true,
+      automergeType: 'branch',
     },
     {
-      "matchPackageNames": ["next", "react", "react-dom"],
-      "groupName": "Next.js core",
-      "stabilityDays": 3
+      matchPackageNames: ['next', 'react', 'react-dom'],
+      groupName: 'Next.js core',
+      stabilityDays: 3,
     },
     {
-      "matchManagers": ["github-actions"],
-      "groupName": "GitHub Actions",
-      "extends": ["schedule:monthly"]
-    }
+      matchManagers: ['github-actions'],
+      groupName: 'GitHub Actions',
+      extends: ['schedule:monthly'],
+    },
   ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": ["before 3am on monday"]
-  }
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ['before 3am on monday'],
+  },
 }

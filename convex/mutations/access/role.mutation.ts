@@ -1,9 +1,10 @@
 // convex/mutations/access/role.mutation.ts
 // Mutations for assigning roles while respecting hierarchy.
 
-import { mutation } from '../../_generated/server'
-import { v } from 'convex/values'
-import { setRole } from '../../functions/access/role.funcs'
+import { v } from 'convex/values';
+
+import { mutation } from '../../_generated/server';
+import { setRole } from '../../functions/access/role.funcs';
 
 export const assign = mutation({
   args: {
@@ -13,10 +14,10 @@ export const assign = mutation({
       v.literal('developer'),
       v.literal('admin'),
       v.literal('moderator'),
-      v.literal('user'),
+      v.literal('user')
     ),
   },
   handler: async (ctx, args) => {
-    return await setRole(ctx, args)
+    return await setRole(ctx, args);
   },
-})
+});

@@ -1,15 +1,13 @@
 // components/Header.tsx
-'use client'
+'use client';
 
-import * as React from 'react'
-import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
-import MenuIcon from '@mui/icons-material/Menu'
-import CloseIcon from '@mui/icons-material/Close'
-import DashboardIcon from '@mui/icons-material/Dashboard'
-import SettingsIcon from '@mui/icons-material/Settings'
-import PersonIcon from '@mui/icons-material/Person'
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import CloseIcon from '@mui/icons-material/Close';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import MenuIcon from '@mui/icons-material/Menu';
+import PersonIcon from '@mui/icons-material/Person';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Box,
   Button,
@@ -27,68 +25,77 @@ import {
   MenuItem,
   ListItemIcon,
   Divider,
-} from '@mui/material'
-import { useTheme } from '@mui/material/styles'
-import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs'
-import { SignInButton } from '@/components/SignInButton'
-import { SignUpButton } from '@/components/SignUpButton'
-import { getUserPage } from '@/content/constants/user.pages'
-import styles from './Header.module.scss'
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import * as React from 'react';
 
-export interface Page { name: string; url: string }
+import { SignInButton } from '@/components/SignInButton';
+import { SignUpButton } from '@/components/SignUpButton';
+import { getUserPage } from '@/content/constants/user.pages';
+
+import styles from './Header.module.scss';
+
+export interface Page {
+  name: string;
+  url: string;
+}
 
 export interface HeaderProps {
-  logo: string
-  version: string
-  pages: Page[]
-  style?: React.CSSProperties
+  logo: string;
+  version: string;
+  pages: Page[];
+  style?: React.CSSProperties;
 }
 
 export default function Header({ logo, version, pages, style }: HeaderProps) {
-  const [menuOpen, setMenuOpen] = React.useState(false)
-  const [latestVersion, setLatestVersion] = React.useState<string | null>(null)
-  const [accountAnchor, setAccountAnchor] = React.useState<HTMLElement | null>(null)
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [latestVersion, setLatestVersion] = React.useState<string | null>(null);
+  const [accountAnchor, setAccountAnchor] = React.useState<HTMLElement | null>(null);
 
-  const { user, isSignedIn } = useUser()
-  const pathname = usePathname()
-  const router = useRouter()
-  const theme = useTheme()
-  const mdUp = useMediaQuery(theme.breakpoints.up('md'))
+  const { user, isSignedIn } = useUser();
+  const pathname = usePathname();
+  const router = useRouter();
+  const theme = useTheme();
+  const mdUp = useMediaQuery(theme.breakpoints.up('md'));
 
   const userSlug = React.useMemo(
-    () => (user?.username ? user.username : user?.id ?? ''),
+    () => (user?.username ? user.username : (user?.id ?? '')),
     [user?.username, user?.id]
-  )
+  );
 
-  const accountMenuOpen = Boolean(accountAnchor)
-  const openAccountMenu = (e: React.MouseEvent<HTMLElement>) => setAccountAnchor(e.currentTarget)
-  const closeAccountMenu = () => setAccountAnchor(null)
+  const accountMenuOpen = Boolean(accountAnchor);
+  const openAccountMenu = (e: React.MouseEvent<HTMLElement>) => setAccountAnchor(e.currentTarget);
+  const closeAccountMenu = () => setAccountAnchor(null);
 
   React.useEffect(() => {
-    let cancelled = false
-    ;(async () => {
+    let cancelled = false;
+    (async () => {
       try {
-        const res = await fetch('https://api.github.com/repos/Sinless777/Helix/releases/latest')
-        if (!res.ok) throw new Error('bad status')
-        const data = await res.json()
-        const tag: string = data?.tag_name ?? ''
-        if (!cancelled) setLatestVersion(tag.replace(/^v/i, '') || null)
+        const res = await fetch('https://api.github.com/repos/Sinless777/Helix/releases/latest');
+        if (!res.ok) throw new Error('bad status');
+        const data = await res.json();
+        const tag: string = data?.tag_name ?? '';
+        if (!cancelled) setLatestVersion(tag.replace(/^v/i, '') || null);
       } catch {
-        if (!cancelled) setLatestVersion(null)
+        if (!cancelled) setLatestVersion(null);
       }
-    })()
-    return () => { cancelled = true }
-  }, [])
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const displayVersion = latestVersion ?? version
-  const releaseUrl = `https://github.com/Sinless777/Helix/releases/tag/v${displayVersion}`
+  const displayVersion = latestVersion ?? version;
+  const releaseUrl = `https://github.com/Sinless777/Helix/releases/tag/v${displayVersion}`;
 
   // Small helpers for internal navigation (no next/link typing involved)
-  const go = (href: string) => router.push(href as unknown as any)
+  const go = (href: string) => router.push(href as unknown as any);
   const goAndClose = (href: string) => {
-    setMenuOpen(false)
-    router.push(href as unknown as any)
-  }
+    setMenuOpen(false);
+    router.push(href as unknown as any);
+  };
 
   return (
     <>
@@ -126,7 +133,11 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
               sx={{
                 color: 'rgba(255,255,255,0.85)',
                 fontSize: '0.85rem',
-                '&:hover': { color: '#fff', fontWeight: 700, textShadow: '0 0 6px rgba(2,35,113,0.6)' },
+                '&:hover': {
+                  color: '#fff',
+                  fontWeight: 700,
+                  textShadow: '0 0 6px rgba(2,35,113,0.6)',
+                },
                 alignSelf: 'center',
               }}
             >
@@ -151,7 +162,7 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
               }}
             >
               {pages.map((p) => {
-                const active = pathname === p.url
+                const active = pathname === p.url;
                 return (
                   <Button
                     key={p.name}
@@ -168,13 +179,18 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
                   >
                     {p.name}
                   </Button>
-                )
+                );
               })}
             </Stack>
           )}
 
           {/* Right: Auth / Account */}
-          <Stack direction="row" alignItems="center" spacing={1} sx={{ flexShrink: 0, pl: { md: 1 }, pr: { md: 0.5 } }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={1}
+            sx={{ flexShrink: 0, pl: { md: 1 }, pr: { md: 0.5 } }}
+          >
             {mdUp ? (
               <>
                 <SignedOut>
@@ -212,7 +228,9 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
                       >
                         {/* Programmatic navigation (no typed next/link inside MUI) */}
                         <MenuItem onClick={() => go(getUserPage('profile', userSlug))}>
-                          <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
+                          <ListItemIcon>
+                            <PersonIcon fontSize="small" />
+                          </ListItemIcon>
                           Profile
                         </MenuItem>
                       </Menu>
@@ -221,7 +239,11 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
                 </SignedIn>
               </>
             ) : (
-              <IconButton onClick={() => setMenuOpen(true)} sx={{ color: '#fff' }} aria-label="Open menu">
+              <IconButton
+                onClick={() => setMenuOpen(true)}
+                sx={{ color: '#fff' }}
+                aria-label="Open menu"
+              >
                 <MenuIcon fontSize="large" />
               </IconButton>
             )}
@@ -236,16 +258,25 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
         onClose={() => setMenuOpen(false)}
         PaperProps={{ sx: { width: 300, bgcolor: '#1f1f2a', color: '#fff' } }}
       >
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 2, py: 2 }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ px: 2, py: 2 }}
+        >
           <Typography variant="subtitle1">Menu</Typography>
-          <IconButton onClick={() => setMenuOpen(false)} sx={{ color: '#fff' }} aria-label="Close menu">
+          <IconButton
+            onClick={() => setMenuOpen(false)}
+            sx={{ color: '#fff' }}
+            aria-label="Close menu"
+          >
             <CloseIcon />
           </IconButton>
         </Stack>
 
         <List component="nav">
           {pages.map((p) => {
-            const active = pathname === p.url
+            const active = pathname === p.url;
             return (
               <ListItem key={p.name} disablePadding>
                 <ListItemButton
@@ -256,7 +287,7 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
                   <ListItemText primary={p.name} />
                 </ListItemButton>
               </ListItem>
-            )
+            );
           })}
 
           {/* Mobile: account group when signed in */}
@@ -266,19 +297,25 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
                 <Divider sx={{ my: 1.5, opacity: 0.2 }} />
                 <ListItem disablePadding>
                   <ListItemButton onClick={() => goAndClose(getUserPage('profile', userSlug))}>
-                    <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}><PersonIcon /></ListItemIcon>
+                    <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}>
+                      <PersonIcon />
+                    </ListItemIcon>
                     <ListItemText primary="Profile" />
                   </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
                   <ListItemButton onClick={() => goAndClose(getUserPage('dashboard', userSlug))}>
-                    <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}><DashboardIcon /></ListItemIcon>
+                    <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}>
+                      <DashboardIcon />
+                    </ListItemIcon>
                     <ListItemText primary="Dashboard" />
                   </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
                   <ListItemButton onClick={() => goAndClose(getUserPage('settings', userSlug))}>
-                    <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}><SettingsIcon /></ListItemIcon>
+                    <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}>
+                      <SettingsIcon />
+                    </ListItemIcon>
                     <ListItemText primary="Settings" />
                   </ListItemButton>
                 </ListItem>
@@ -303,5 +340,5 @@ export default function Header({ logo, version, pages, style }: HeaderProps) {
       {/* Spacer so content isn’t hidden behind the fixed header */}
       <Box sx={{ height: { xs: 64, md: 68 } }} />
     </>
-  )
+  );
 }

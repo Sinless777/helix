@@ -1,7 +1,7 @@
 // app/technology/layout.tsx
 
-import type { Metadata } from 'next'
-import React from 'react'
+import type { Metadata } from 'next';
+import React from 'react';
 
 export const metadata: Metadata = {
   title: 'Helix AI Technologies | Advanced AI Solutions & Architecture',
@@ -45,22 +45,12 @@ export const metadata: Metadata = {
     title: 'Helix AI Technologies | Advanced AI Solutions & Architecture',
     description:
       'Discover Helix AI Technologies: innovative AI platforms and integrations for developers and enterprises.',
-    images: [
-      'https://cdn.sinlessgamesllc.com/Helix-AI/images/Technology_Card.png',
-    ],
+    images: ['https://cdn.sinlessgamesllc.com/Helix-AI/images/Technology_Card.png'],
     site: '@Sinless777',
     creator: '@Sinless777',
   },
-}
+};
 
-export default function TechnologyLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <main className="flex flex-col min-h-screen bg-black text-white">
-      {children}
-    </main>
-  )
+export default function TechnologyLayout({ children }: { children: React.ReactNode }) {
+  return <main className="flex flex-col min-h-screen bg-black text-white">{children}</main>;
 }

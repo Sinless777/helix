@@ -1,12 +1,12 @@
 // app/api/V1/[user-id]/notification/route.ts
+import { getAuth } from '@clerk/nextjs/server';
+import { ConvexHttpClient } from 'convex/browser';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import { api } from '@/convex/_generated/api';
-import { ConvexHttpClient } from 'convex/browser';
 
 // Import your auth utilities from Clerk
-import { getAuth } from '@clerk/nextjs/server';
 
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
 if (!convexUrl) {
@@ -32,7 +32,10 @@ async function requireOwner(request: NextRequest, userIdParam: string) {
 /**
  * GET: List notifications (all, or filtered by read/unread via query param)
  */
-export async function GET(request: NextRequest, { params }: { params: Promise<{ 'user-id': string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ 'user-id': string }> }
+) {
   const { 'user-id': userIdParam } = await params;
   const check = await requireOwner(request, userIdParam);
   if (check) return check;
@@ -42,11 +45,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   let result;
   if (filter === 'unread') {
-    result = await convexClient.query(api.notifications.listUnreadNotifications, { userId: userIdParam });
+    result = await convexClient.query(api.notifications.listUnreadNotifications, {
+      userId: userIdParam,
+    });
   } else if (filter === 'read') {
-    result = await convexClient.query(api.notifications.listReadNotifications, { userId: userIdParam });
+    result = await convexClient.query(api.notifications.listReadNotifications, {
+      userId: userIdParam,
+    });
   } else {
-    result = await convexClient.query(api.notifications.listAllNotifications, { userId: userIdParam });
+    result = await convexClient.query(api.notifications.listAllNotifications, {
+      userId: userIdParam,
+    });
   }
 
   return NextResponse.json({ data: result }, { status: 200 });
@@ -55,7 +64,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 /**
  * POST: Create/send a notification for the user.
  */
-export async function POST(request: NextRequest, { params }: { params: Promise<{ 'user-id': string }> }) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ 'user-id': string }> }
+) {
   const { 'user-id': userIdParam } = await params;
   const check = await requireOwner(request, userIdParam);
   if (check) return check;
@@ -80,7 +92,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 /**
  * PATCH: Update a notification (e.g., mark as read/unread).
  */
-export async function PATCH(request: NextRequest, { params }: { params: Promise<{ 'user-id': string }> }) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ 'user-id': string }> }
+) {
   const { 'user-id': userIdParam } = await params;
   const check = await requireOwner(request, userIdParam);
   if (check) return check;
@@ -89,7 +104,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const { notificationId, read } = body;
 
   if (!notificationId || typeof read !== 'boolean') {
-    return NextResponse.json({ error: 'notificationId and read(boolean) are required' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'notificationId and read(boolean) are required' },
+      { status: 400 }
+    );
   }
 
   await convexClient.mutation(api.notifications.markAsRead, { notificationId });
@@ -100,7 +118,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 /**
  * DELETE: Remove a notification.
  */
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ 'user-id': string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ 'user-id': string }> }
+) {
   const { 'user-id': userIdParam } = await params;
   const check = await requireOwner(request, userIdParam);
   if (check) return check;

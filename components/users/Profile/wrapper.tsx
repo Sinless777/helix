@@ -1,21 +1,22 @@
 // components/users/Profile/wrapper.tsx
-"use client";
+'use client';
 
-import * as React from "react";
-import { alpha, useTheme } from "@mui/material/styles";
-import { Box, Divider } from "@mui/material";
-import { Grid } from "@mui/material";
-import ProfileSidebar from "./sidebar";
-import ProfileTopbar from "./topbar";
+import { Box, Divider } from '@mui/material';
+import { Grid } from '@mui/material';
+import { alpha, useTheme } from '@mui/material/styles';
+import * as React from 'react';
+
+import ProfileSidebar from './sidebar';
+import ProfileTopbar from './topbar';
 
 export type ProfileSectionKey =
-  | "profile"
-  | "dashboard"
-  | "accounts"
-  | "payments"
-  | "subscriptions"
-  | "support"
-  | "settings";
+  | 'profile'
+  | 'dashboard'
+  | 'accounts'
+  | 'payments'
+  | 'subscriptions'
+  | 'support'
+  | 'settings';
 
 export interface ProfileLayoutProps {
   user: {
@@ -27,36 +28,36 @@ export interface ProfileLayoutProps {
   defaultSection?: ProfileSectionKey;
 }
 
-export function ProfileLayout({ user, userId, sections, defaultSection = "profile" }: ProfileLayoutProps) {
+export function ProfileLayout({
+  user,
+  userId,
+  sections,
+  defaultSection = 'profile',
+}: ProfileLayoutProps) {
   const theme = useTheme();
 
   const glass = {
-    bgcolor: alpha(
-      theme.palette.background.paper,
-      theme.palette.mode === "dark" ? 0.35 : 0.55
-    ),
-    backdropFilter: "blur(10px) saturate(120%)",
-    WebkitBackdropFilter: "blur(10px) saturate(120%)",
+    bgcolor: alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.35 : 0.55),
+    backdropFilter: 'blur(10px) saturate(120%)',
+    WebkitBackdropFilter: 'blur(10px) saturate(120%)',
     border: `1px solid ${alpha(theme.palette.common.white, 0.08)}`,
     boxShadow:
-      theme.palette.mode === "dark"
-        ? "0 8px 24px rgba(0,0,0,.35)"
-        : "0 8px 24px rgba(0,0,0,.12)",
+      theme.palette.mode === 'dark' ? '0 8px 24px rgba(0,0,0,.35)' : '0 8px 24px rgba(0,0,0,.12)',
   } as const;
 
   const stickyTop = 16;
   const [activeSection, setActiveSection] = React.useState<ProfileSectionKey>(defaultSection);
   const contentKey = React.useMemo<ProfileSectionKey>(() => {
-    return sections[activeSection] ? activeSection : "profile";
+    return sections[activeSection] ? activeSection : 'profile';
   }, [activeSection, sections]);
   const activeContent = sections[contentKey] ?? sections.profile;
 
   return (
     <Box
       sx={{
-        bgcolor: "transparent",
-        display: "flex",
-        flexDirection: "column",
+        bgcolor: 'transparent',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       <Grid container sx={{ flex: 1, minHeight: 0, p: { xs: 2, md: 3 } }} spacing={2}>
@@ -64,19 +65,19 @@ export function ProfileLayout({ user, userId, sections, defaultSection = "profil
         <Grid
           size={{ xs: 12, md: 3 }}
           sx={{
-            position: { md: "sticky" },
+            position: { md: 'sticky' },
             top: { md: stickyTop },
             height: { md: `calc(90vh - ${stickyTop + 24}px)` },
-            alignSelf: "flex-start",
+            alignSelf: 'flex-start',
           }}
         >
           <Box
             sx={{
               ...glass,
               borderRadius: 3,
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
             {userId ? (
@@ -96,11 +97,11 @@ export function ProfileLayout({ user, userId, sections, defaultSection = "profil
                 counts={{ supportTickets: 2 }}
                 sx={{ px: 1, py: 1 }}
                 items={[
-                  { key: "profile", label: "Profile" },
-                  { key: "payments", label: "Payments" },
-                  { key: "subscriptions", label: "Subscriptions" },
-                  { key: "support", label: "Support Tickets", badge: 2 },
-                  { key: "settings", label: "Settings" },
+                  { key: 'profile', label: 'Profile' },
+                  { key: 'payments', label: 'Payments' },
+                  { key: 'subscriptions', label: 'Subscriptions' },
+                  { key: 'support', label: 'Support Tickets', badge: 2 },
+                  { key: 'settings', label: 'Settings' },
                 ]}
               />
             </Box>
@@ -111,7 +112,7 @@ export function ProfileLayout({ user, userId, sections, defaultSection = "profil
         <Grid
           size={{ xs: 12, md: 9 }}
           sx={{
-            bgcolor: "transparent",
+            bgcolor: 'transparent',
             p: { xs: 0.5, md: 1 },
           }}
         >

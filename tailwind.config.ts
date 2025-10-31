@@ -1,5 +1,5 @@
 // tailwind.config.ts
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   darkMode: 'class',
@@ -35,6 +35,6 @@ const config: Config = {
     // ✅ Shadcn UI animation & form utilities (optional)
     require('tailwindcss-animate'),
   ],
-}
+};
 
-export default config
+export default config;

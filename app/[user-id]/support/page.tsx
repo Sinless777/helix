@@ -1,12 +1,13 @@
 // app/[user-id]/support/page.tsx
+import { auth } from '@clerk/nextjs/server';
+import { Container, Stack, Typography, Divider } from '@mui/material';
 import type { Metadata, Route } from 'next';
 import { redirect } from 'next/navigation';
-import { Container, Stack, Typography, Divider } from '@mui/material';
-import { auth } from '@clerk/nextjs/server';
-import { getProfile } from '@/lib/users/profile';
-import { getUserData } from '@/lib/users/users';
+
 import SupportTicketsPanel from '@/components/support/SupportTicketsPanel';
 import { roleRank } from '@/content/constants/roles';
+import { getProfile } from '@/lib/users/profile';
+import { getUserData } from '@/lib/users/users';
 
 export const metadata: Metadata = {
   title: 'Support Tickets | Helix AI',
@@ -47,8 +48,7 @@ export default async function SupportPage(props: PageProps) {
     redirect(destination);
   }
 
-  const canCreate =
-    (features.includes('ticket_system') || canModerate) && viewerId === routeUserId;
+  const canCreate = (features.includes('ticket_system') || canModerate) && viewerId === routeUserId;
 
   return (
     <Container
@@ -89,7 +89,8 @@ export default async function SupportPage(props: PageProps) {
           maxWidth="sm"
           sx={{ fontSize: { xs: '0.95rem', sm: '1rem' } }}
         >
-          Submit a support request or track the status of your existing conversations with the Helix team.
+          Submit a support request or track the status of your existing conversations with the Helix
+          team.
         </Typography>
 
         <Divider sx={{ width: '60px', my: 2, borderColor: 'divider' }} />

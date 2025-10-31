@@ -1,6 +1,7 @@
-import { mutation } from '../../_generated/server'
-import { v } from 'convex/values'
-import { addHandler } from '../../functions/user/waitlist.funcs'
+import { v } from 'convex/values';
+
+import { mutation } from '../../_generated/server';
+import { addHandler } from '../../functions/user/waitlist.funcs';
 
 export const add = mutation({
   args: {
@@ -12,6 +13,6 @@ export const add = mutation({
     userId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await addHandler(ctx as any, args)
+    return await addHandler(ctx as any, args);
   },
-})
+});

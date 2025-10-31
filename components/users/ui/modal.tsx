@@ -59,11 +59,7 @@ export function PrimitiveModal({
       <DialogTitle>
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={1}>
           <Stack spacing={0.5} flexGrow={1}>
-            {typeof title === 'string' ? (
-              <Typography variant="h6">{title}</Typography>
-            ) : (
-              title
-            )}
+            {typeof title === 'string' ? <Typography variant="h6">{title}</Typography> : title}
             {description &&
               (typeof description === 'string' ? (
                 <Typography variant="body2" color="text.secondary">

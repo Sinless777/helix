@@ -3,10 +3,10 @@ export {
   listUnreadNotifications,
   listReadNotifications,
   listAllNotifications,
-} from './queries/system/notification.query'
+} from './queries/system/notification.query';
 
 export {
   createNotification,
   markAsRead,
   deleteNotification,
-} from './mutations/system/notifications.mutation'
+} from './mutations/system/notifications.mutation';

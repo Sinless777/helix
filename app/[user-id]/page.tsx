@@ -1,69 +1,69 @@
 // app/[user-id]/page.tsx
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { Box, Grid } from '@mui/material'
 
-import { auth } from '@clerk/nextjs/server'
-import { getUserData } from '@/lib/users/users'
-import { getProfile } from '@/lib/users/profile'
-import { getLinkedAccounts } from '@/lib/users/accounts'
-import { ProfileLayout } from '@/components/users/Profile/wrapper'
-import Header from '@/components/Header'
-import { headerProps } from '@/content/header'
-import ProfileDetails from '@/components/users/Profile/ProfileDetails'
-import ProfileAccountsCard from '@/components/users/Profile/ProfileAccountsCard'
-import PaymentsPanel from '@/components/payments/PaymentsPanel'
-import SubscriptionPanel from '@/components/subscriptions/SubscriptionPanel'
-import SupportTicketsPanel from '@/components/support/SupportTicketsPanel'
-import { roleRank } from '@/content/constants/roles'
+import { auth } from '@clerk/nextjs/server';
+import { Box, Grid } from '@mui/material';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
-type PageParams = { 'user-id': string }
-type PageProps = { params: Promise<PageParams> }
+import Header from '@/components/Header';
+import PaymentsPanel from '@/components/payments/PaymentsPanel';
+import SubscriptionPanel from '@/components/subscriptions/SubscriptionPanel';
+import SupportTicketsPanel from '@/components/support/SupportTicketsPanel';
+import ProfileAccountsCard from '@/components/users/Profile/ProfileAccountsCard';
+import ProfileDetails from '@/components/users/Profile/ProfileDetails';
+import { ProfileLayout } from '@/components/users/Profile/wrapper';
+import { roleRank } from '@/content/constants/roles';
+import { headerProps } from '@/content/header';
+import { getLinkedAccounts } from '@/lib/users/accounts';
+import { getProfile } from '@/lib/users/profile';
+import { getUserData } from '@/lib/users/users';
+
+type PageParams = { 'user-id': string };
+type PageProps = { params: Promise<PageParams> };
 
 // --- Metadata ---
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
-  const resolved = await props.params?.catch?.(() => undefined)
-  const userId = resolved?.['user-id']
+  const resolved = await props.params?.catch?.(() => undefined);
+  const userId = resolved?.['user-id'];
 
-  if (!userId)
-    return { title: 'User', description: 'User profile on Helix AI' }
+  if (!userId) return { title: 'User', description: 'User profile on Helix AI' };
 
-  const user = await getUserData(userId)
-  const title = user ? `${user.name} (@${user.username ?? user.id})` : 'User'
-  const desc = user?.about || `View ${user?.name ?? userId}'s profile on Helix AI.`
+  const user = await getUserData(userId);
+  const title = user ? `${user.name} (@${user.username ?? user.id})` : 'User';
+  const desc = user?.about || `View ${user?.name ?? userId}'s profile on Helix AI.`;
 
   return {
     title,
     description: desc,
     openGraph: { title, description: desc, type: 'profile' },
     twitter: { card: 'summary', title, description: desc },
-  }
+  };
 }
 
 // --- Page ---
 export default async function AboutUserPage(props: PageProps) {
   // Safely unwrap params (Next 16 passes a Promise)
-  const resolved = await props.params?.catch?.(() => undefined)
-  const userId = resolved?.['user-id']
-  if (!userId) notFound()
+  const resolved = await props.params?.catch?.(() => undefined);
+  const userId = resolved?.['user-id'];
+  if (!userId) notFound();
 
   const [authResult, user] = await Promise.all([
     auth().catch(() => ({ userId: null })),
     getUserData(userId),
-  ])
-  if (!user) notFound()
+  ]);
+  if (!user) notFound();
 
   // 🔄 Sync profile features from Clerk via our API route first.
   // We use a relative fetch which works on the server in Next.js runtime.
   // If it fails, we continue gracefully and fall back to getProfile().
-  let syncedProfile: any | null = null
+  let syncedProfile: any | null = null;
   try {
-    const res = await fetch(
-      `/api/V1/${encodeURIComponent(user.id)}/profile`,
-      { cache: 'no-store', next: { revalidate: 0 } }
-    )
+    const res = await fetch(`/api/V1/${encodeURIComponent(user.id)}/profile`, {
+      cache: 'no-store',
+      next: { revalidate: 0 },
+    });
     if (res.ok) {
-      syncedProfile = await res.json().catch(() => null)
+      syncedProfile = await res.json().catch(() => null);
     }
   } catch {
     // ignore; we'll fall back below
@@ -73,35 +73,35 @@ export default async function AboutUserPage(props: PageProps) {
   const [profile, accounts] = await Promise.all([
     syncedProfile ?? user.profile ?? getProfile(user.id),
     getLinkedAccounts(user.id),
-  ])
-  if (!profile) notFound()
+  ]);
+  if (!profile) notFound();
 
-  const avatarUrl = user.avatarUrl
-  const viewerId = authResult?.userId ?? null
-  const isAuthenticated = viewerId !== null
-  const canEdit = viewerId === user.id
+  const avatarUrl = user.avatarUrl;
+  const viewerId = authResult?.userId ?? null;
+  const isAuthenticated = viewerId !== null;
+  const canEdit = viewerId === user.id;
 
   const clerkFeatures = Array.isArray(user.features)
-    ? user.features.map((feature) => feature?.toString()).filter((feature): feature is string => Boolean(feature))
-    : []
-  const mergedFeatures = clerkFeatures.length > 0 ? clerkFeatures : profile.features ?? []
-  const profileWithFeatures = { ...profile, features: mergedFeatures }
+    ? user.features
+        .map((feature) => feature?.toString())
+        .filter((feature): feature is string => Boolean(feature))
+    : [];
+  const mergedFeatures = clerkFeatures.length > 0 ? clerkFeatures : (profile.features ?? []);
+  const profileWithFeatures = { ...profile, features: mergedFeatures };
 
-  const role: keyof typeof roleRank = profileWithFeatures.role ?? 'user'
-  const features = profileWithFeatures.features ?? []
-  const canModerate = roleRank[role] >= roleRank.moderator
-  const ticketFeatureEnabled = features.includes('ticket_system') || canModerate
+  const role: keyof typeof roleRank = profileWithFeatures.role ?? 'user';
+  const features = profileWithFeatures.features ?? [];
+  const canModerate = roleRank[role] >= roleRank.moderator;
+  const ticketFeatureEnabled = features.includes('ticket_system') || canModerate;
 
   const layoutName =
     [profileWithFeatures?.firstName, profileWithFeatures?.middleName, profileWithFeatures?.lastName]
       .filter(Boolean)
       .join(' ')
-      .trim() || user.name
+      .trim() || user.name;
 
   const layoutUser =
-    avatarUrl !== undefined
-      ? { name: layoutName, avatarUrl }
-      : { name: layoutName }
+    avatarUrl !== undefined ? { name: layoutName, avatarUrl } : { name: layoutName };
 
   return (
     <Box>
@@ -182,5 +182,5 @@ export default async function AboutUserPage(props: PageProps) {
         }}
       />
     </Box>
-  )
+  );
 }

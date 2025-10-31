@@ -1,5 +1,6 @@
-import { query } from "../../_generated/server"
-import { v } from "convex/values"
+import { v } from 'convex/values';
+
+import { query } from '../../_generated/server';
 
 /** List unread notifications for a user. */
 export const listUnreadNotifications = query({
@@ -9,9 +10,9 @@ export const listUnreadNotifications = query({
       .query('notifications')
       .withIndex('by_userId_unread', (q) => q.eq('userId', userId).eq('read', false))
       .order('desc')
-      .take(50)
+      .take(50);
   },
-})
+});
 
 /** List read notifications for a user. */
 export const listReadNotifications = query({
@@ -21,9 +22,9 @@ export const listReadNotifications = query({
       .query('notifications')
       .withIndex('by_userId_unread', (q) => q.eq('userId', userId).eq('read', true))
       .order('desc')
-      .take(50)
+      .take(50);
   },
-})
+});
 
 /** List all notifications (read + unread) for a user. */
 export const listAllNotifications = query({
@@ -33,6 +34,6 @@ export const listAllNotifications = query({
       .query('notifications')
       .filter((q) => q.eq(q.field('userId'), userId))
       .order('desc')
-      .take(100)
+      .take(100);
   },
-})
+});

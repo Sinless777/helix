@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import {
   Alert,
   Box,
@@ -14,6 +13,7 @@ import {
   Typography,
   type SelectChangeEvent,
 } from '@mui/material';
+import * as React from 'react';
 
 export interface SupportTicketFormProps {
   onCreated?: () => void;
@@ -79,11 +79,15 @@ export default function SupportTicketForm({ onCreated, disabled }: SupportTicket
         setSubmitting(false);
       }
     },
-    [description, disabled, onCreated, reset, submitting, title, category],
+    [description, disabled, onCreated, reset, submitting, title, category]
   );
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+    >
       {error ? <Alert severity="error">{error}</Alert> : null}
       {success ? <Alert severity="success">{success}</Alert> : null}
 

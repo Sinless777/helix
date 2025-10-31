@@ -1,7 +1,7 @@
 // app/contact/layout.tsx
 
-import type { Metadata } from 'next'
-import React from 'react'
+import type { Metadata } from 'next';
+import React from 'react';
 
 export const metadata: Metadata = {
   title: 'Contact Helix AI | Reach Out for Support, Sales & Partnerships',
@@ -45,25 +45,16 @@ export const metadata: Metadata = {
     title: 'Contact Helix AI | Reach Out for Support, Sales & Partnerships',
     description:
       'Have questions or need help? Contact Helix AI for support, sales, or partnership opportunities. Our team is ready to assist you.',
-    images: [
-      'https://cdn.sinlessgamesllc.com/Helix-AI/images/Helix_Contact_Card.png',
-    ],
+    images: ['https://cdn.sinlessgamesllc.com/Helix-AI/images/Helix_Contact_Card.png'],
     site: '@Sinless777',
     creator: '@Sinless777',
   },
-}
+};
 
-export default function ContactLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function ContactLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main
-      id="contact"
-      className="flex flex-col min-h-screen bg-black text-white"
-    >
+    <main id="contact" className="flex flex-col min-h-screen bg-black text-white">
       {children}
     </main>
-  )
+  );
 }

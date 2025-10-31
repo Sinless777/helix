@@ -4,7 +4,6 @@
 // Client-side form for updating encrypted user settings. Handles encryption via
 // the shared AES helpers before calling the Convex mutation.
 
-import * as React from 'react';
 import {
   Alert,
   Box,
@@ -23,9 +22,11 @@ import {
   Typography,
 } from '@mui/material';
 import { useMutation } from 'convex/react';
+import * as React from 'react';
+
+import { api } from '@/convex/_generated/api';
 import { encryptJson } from '@/lib/security/encrypt.util';
 import type { UserSettingsContent } from '@/lib/users/settings';
-import { api } from '@/convex/_generated/api';
 
 export interface SettingsFormProps {
   userId: string;
@@ -106,7 +107,10 @@ export default function SettingsForm({ userId, initialSettings, version }: Setti
           <Select
             value={settings.theme}
             onChange={(event) =>
-              setSettings((prev) => ({ ...prev, theme: event.target.value as UserSettingsContent['theme'] }))
+              setSettings((prev) => ({
+                ...prev,
+                theme: event.target.value as UserSettingsContent['theme'],
+              }))
             }
             size="small"
             sx={{ mt: 1, width: '100%', maxWidth: 240 }}
@@ -135,9 +139,7 @@ export default function SettingsForm({ userId, initialSettings, version }: Setti
           <TextField
             label="Timezone"
             value={settings.timezone}
-            onChange={(event) =>
-              setSettings((prev) => ({ ...prev, timezone: event.target.value }))
-            }
+            onChange={(event) => setSettings((prev) => ({ ...prev, timezone: event.target.value }))}
             helperText="Format example: America/Los_Angeles"
             fullWidth
           />

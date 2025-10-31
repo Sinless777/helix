@@ -1,7 +1,12 @@
-import { mutation } from "../../_generated/server"
-import { v } from "convex/values"
+import { v } from 'convex/values';
 
-export { listUnreadNotifications, listReadNotifications, listAllNotifications } from "../../queries/system/notification.query"
+import { mutation } from '../../_generated/server';
+
+export {
+  listUnreadNotifications,
+  listReadNotifications,
+  listAllNotifications,
+} from '../../queries/system/notification.query';
 
 /** Create a new notification for the given user. */
 export const createNotification = mutation({
@@ -19,22 +24,22 @@ export const createNotification = mutation({
       metadata: metadata ?? {},
       createdAt: Date.now(),
       read: false,
-    })
+    });
   },
-})
+});
 
 /** Mark a notification as read. */
 export const markAsRead = mutation({
   args: { notificationId: v.id('notifications') },
   handler: async (ctx, { notificationId }) => {
-    await ctx.db.patch(notificationId, { read: true })
+    await ctx.db.patch(notificationId, { read: true });
   },
-})
+});
 
 /** Delete a notification. */
 export const deleteNotification = mutation({
   args: { notificationId: v.id('notifications') },
   handler: async (ctx, { notificationId }) => {
-    await ctx.db.delete(notificationId)
+    await ctx.db.delete(notificationId);
   },
-})
+});

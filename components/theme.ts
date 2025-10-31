@@ -1,18 +1,15 @@
 // components/theme.ts
-import { createTheme, type ThemeOptions } from '@mui/material/styles'
-import * as clerkThemes from '@clerk/themes'
-import { HELIX_COLORS, HelixFonts, type Mode } from '@/content/constants/theme'
+import * as clerkThemes from '@clerk/themes';
+import { createTheme, type ThemeOptions } from '@mui/material/styles';
 
-
-
-
+import { HELIX_COLORS, HelixFonts, type Mode } from '@/content/constants/theme';
 
 /**
  * Clerk appearance styled to match our MUI theme.
  * Keep this fully-serializable (no functions) to avoid server/client issues.
  */
 export function getClerkAppearance(mode: Mode) {
-  const c = HELIX_COLORS[mode]
+  const c = HELIX_COLORS[mode];
 
   return {
     baseTheme: mode === 'dark' ? clerkThemes.dark : (clerkThemes as any).light,
@@ -41,18 +38,28 @@ export function getClerkAppearance(mode: Mode) {
         '&:hover': { textDecoration: 'underline' },
       },
       // be explicit for both pages
-      signIn: { formButtonPrimary: { backgroundColor: c.primary, '&:hover': { backgroundColor: c.secondary } } },
-      signUp: { formButtonPrimary: { backgroundColor: c.primary, '&:hover': { backgroundColor: c.secondary } } },
+      signIn: {
+        formButtonPrimary: {
+          backgroundColor: c.primary,
+          '&:hover': { backgroundColor: c.secondary },
+        },
+      },
+      signUp: {
+        formButtonPrimary: {
+          backgroundColor: c.primary,
+          '&:hover': { backgroundColor: c.secondary },
+        },
+      },
     },
     cssLayerName: 'clerk',
-  }
+  };
 }
 
 /**
  * MUI theme with Pinyon for h1–h2 and Lora for h3–h6 + body.
  */
 export function getMuiTheme(mode: Mode) {
-  const c = HELIX_COLORS[mode]
+  const c = HELIX_COLORS[mode];
 
   const themeOptions: ThemeOptions = {
     palette: {
@@ -77,7 +84,12 @@ export function getMuiTheme(mode: Mode) {
       subtitle2: { fontFamily: HelixFonts.LORA },
       body1: { fontFamily: HelixFonts.LORA },
       body2: { fontFamily: HelixFonts.LORA },
-      button: { fontFamily: HelixFonts.LORA, textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' },
+      button: {
+        fontFamily: HelixFonts.LORA,
+        textTransform: 'uppercase',
+        fontWeight: 600,
+        letterSpacing: '0.05em',
+      },
       overline: { fontFamily: HelixFonts.LORA, letterSpacing: '0.08em' },
       caption: { fontFamily: HelixFonts.LORA },
     },
@@ -103,7 +115,7 @@ export function getMuiTheme(mode: Mode) {
         },
       },
     },
-  }
+  };
 
-  return createTheme(themeOptions)
+  return createTheme(themeOptions);
 }

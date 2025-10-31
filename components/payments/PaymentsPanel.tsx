@@ -3,7 +3,6 @@
 // components/payments/PaymentsPanel.tsx
 // Payment management shell using Clerk session context and Material UI.
 
-import * as React from 'react';
 import { SignedIn, SignedOut, SignInButton, useUser } from '@clerk/nextjs';
 import {
   Alert,
@@ -17,10 +16,13 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import * as React from 'react';
 
 function PaymentMethods() {
   const { user } = useUser();
-  const methods = (user?.publicMetadata?.paymentMethods as Array<{ brand: string; last4: string }> | undefined) ?? [];
+  const methods =
+    (user?.publicMetadata?.paymentMethods as Array<{ brand: string; last4: string }> | undefined) ??
+    [];
 
   return (
     <Card sx={{ borderRadius: 3 }}>

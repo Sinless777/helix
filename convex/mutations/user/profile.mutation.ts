@@ -1,11 +1,12 @@
 // convex/mutations/user/profile.mutation.ts
 // Connects the shared profile save handler to Convex's mutation registry.
 
-import { mutation } from '../../_generated/server'
-import { v } from 'convex/values'
-import { saveHandler, setFeaturesForUser } from '../../functions/user/profile.funcs'
+import { v } from 'convex/values';
 
-export { getByUserId } from '../../queries/user/profile.query'
+import { mutation } from '../../_generated/server';
+import { saveHandler, setFeaturesForUser } from '../../functions/user/profile.funcs';
+
+export { getByUserId } from '../../queries/user/profile.query';
 
 export const save = mutation({
   args: {
@@ -19,9 +20,9 @@ export const save = mutation({
     settingsId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await saveHandler(ctx, args)
+    return await saveHandler(ctx, args);
   },
-})
+});
 
 export const setFeatures = mutation({
   args: {
@@ -29,6 +30,6 @@ export const setFeatures = mutation({
     features: v.array(v.string()),
   },
   handler: async (ctx, args) => {
-    return await setFeaturesForUser(ctx, args)
+    return await setFeaturesForUser(ctx, args);
   },
-})
+});

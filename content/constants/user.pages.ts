@@ -6,7 +6,7 @@ export const UserPages = {
   profile: '/{user-id}',
   settings: '/{user-id}/settings',
   dashboard: '/{user-id}/dashboard',
-} as const
+} as const;
 
 /**
  * Replace `{user-id}` with an actual user ID (or username slug).
@@ -16,6 +16,6 @@ export const UserPages = {
  * @returns A string with the placeholder replaced, e.g. "/u_123/dashboard"
  */
 export function getUserPage(page: keyof typeof UserPages, userId: string): string {
-  const template = UserPages[page]
-  return template.replace('{user-id}', encodeURIComponent(userId))
+  const template = UserPages[page];
+  return template.replace('{user-id}', encodeURIComponent(userId));
 }

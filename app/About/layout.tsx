@@ -1,6 +1,6 @@
 // app/about/layout.tsx
-import type { Metadata } from 'next'
-import React from 'react'
+import type { Metadata } from 'next';
+import React from 'react';
 
 export const metadata: Metadata = {
   title: 'About Helix AI | Helix AI — Your Intelligent Digital Companion',
@@ -45,16 +45,8 @@ export const metadata: Metadata = {
       'Learn about Helix AI: the intelligent digital companion built to unify your tools, simplify workflows, and empower decisions with real-time insights and adaptive AI.',
     images: ['https://cdn.sinlessgamesllc.com/Helix-AI/images/Helix_Logo.png'],
   },
-}
+};
 
-export default function AboutLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <main className="flex min-h-screen flex-col bg-black text-white">
-      {children}
-    </main>
-  )
+export default function AboutLayout({ children }: { children: React.ReactNode }) {
+  return <main className="flex min-h-screen flex-col bg-black text-white">{children}</main>;
 }

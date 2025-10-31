@@ -1,11 +1,12 @@
 // app/api/V1/support/ticket/route.ts
 // REST surface wrapping Convex ticket operations with Clerk authentication.
 
+import { auth } from '@clerk/nextjs/server';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import { convexMutation, convexQuery } from '@/lib/convex';
+
 import { roleRank, type Role } from '@/content/constants/roles';
+import { convexMutation, convexQuery } from '@/lib/convex';
 import { getProfile } from '@/lib/users/profile';
 import type { SupportTicket } from '@/types/support';
 
@@ -76,7 +77,7 @@ export async function GET(request: NextRequest) {
   const category = isTicketCategory(categoryParam) ? categoryParam : undefined;
 
   const targetUser =
-    canModerate && params.has('userId') ? params.get('userId') ?? undefined : undefined;
+    canModerate && params.has('userId') ? (params.get('userId') ?? undefined) : undefined;
 
   const limit = parseLimit(params.get('limit'));
 
@@ -131,15 +132,12 @@ export async function POST(request: NextRequest) {
   const category = body.category && isTicketCategory(body.category) ? body.category : undefined;
 
   if (!title || !description) {
-    return NextResponse.json(
-      { error: 'Title and description are required.' },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'Title and description are required.' }, { status: 400 });
   }
   if (!category) {
     return NextResponse.json(
       { error: 'Category must be one of BUG, FEATURE_REQUEST, OTHER.' },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -152,7 +150,7 @@ export async function POST(request: NextRequest) {
   if (!hasFeature && !canModerate) {
     return NextResponse.json(
       { error: 'Ticket system is not enabled for this account.' },
-      { status: 403 },
+      { status: 403 }
     );
   }
 

@@ -1,10 +1,11 @@
 // app/[user-id]/subscriptions/page.tsx
 // Subscription management landing page guarded by Clerk.
 
+import { auth } from '@clerk/nextjs/server';
+import { Container, Stack, Typography } from '@mui/material';
 import type { Metadata, Route } from 'next';
 import { redirect } from 'next/navigation';
-import { Container, Stack, Typography } from '@mui/material';
-import { auth } from '@clerk/nextjs/server';
+
 import SubscriptionPanel from '@/components/subscriptions/SubscriptionPanel';
 
 export const metadata: Metadata = {
@@ -27,7 +28,8 @@ export default async function SubscriptionsPage(props: PageProps) {
   const userId = authResult?.userId;
 
   if (!userId) {
-    const destination = `/sign-in?redirect_url=/${encodeURIComponent(routeUserId)}/subscriptions` as Route;
+    const destination =
+      `/sign-in?redirect_url=/${encodeURIComponent(routeUserId)}/subscriptions` as Route;
     redirect(destination);
   }
 

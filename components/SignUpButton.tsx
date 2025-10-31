@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import * as React from 'react'
-import { SignUpButton as ClerkSignUpButton } from '@clerk/nextjs'
-import Button from '@mui/material/Button'
-import { useTheme } from '@mui/material/styles'
+import { SignUpButton as ClerkSignUpButton } from '@clerk/nextjs';
+import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
+import * as React from 'react';
 
 /**
  * Helix-themed SignUp button that opens Clerk's modal.
  * Ensures the Clerk component stays PascalCase and in scope.
  */
 export function SignUpButton() {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <ClerkSignUpButton mode="modal">
@@ -37,7 +37,7 @@ export function SignUpButton() {
         Register
       </Button>
     </ClerkSignUpButton>
-  )
+  );
 }
 
-export default SignUpButton
+export default SignUpButton;

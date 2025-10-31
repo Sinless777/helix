@@ -1,8 +1,9 @@
 // convex/mutations/support/ticket.mutation.ts
 // Ticket mutations exposed to clients.
 
-import { mutation } from '../../_generated/server';
 import { v } from 'convex/values';
+
+import { mutation } from '../../_generated/server';
 import { createTicket, updateTicket } from '../../functions/support/ticket.funcs';
 
 // Allowed statuses: make sure this matches your constants
@@ -11,14 +12,14 @@ const statusEnum = v.union(
   v.literal('IN_PROGRESS'),
   v.literal('RESOLVED'),
   v.literal('CLOSED'),
-  v.literal('ESCALATED'),
+  v.literal('ESCALATED')
 );
 
 // Allowed categories: ensure they match schema/category union
 const categoryEnum = v.union(
   v.literal('BUG'),
   v.literal('FEATURE_REQUEST'),
-  v.literal('OTHER'),
+  v.literal('OTHER')
   // add further categories here
 );
 

@@ -12,6 +12,6 @@ export const serviceStatusUrls = {
   epicGames: 'https://status.epicgames.com/',
   clerks: 'https://status.clerk.com/',
   cloudflare: 'https://www.cloudflarestatus.com/',
-} as const
+} as const;
 
-export type ServiceKey = keyof typeof serviceStatusUrls
+export type ServiceKey = keyof typeof serviceStatusUrls;
