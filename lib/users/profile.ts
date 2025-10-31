@@ -8,6 +8,7 @@ import { Sex, SexValues } from '@/content/constants/profile/sex.enum'
 import { Sexuality, SexualityValues } from '@/content/constants/profile/sexuality.enum'
 import { GradeLevel, GradeLevelValues } from '@/content/constants/profile/grade-level.enum'
 import { Country, CountryValues } from '@/content/constants/profile/country.enum'
+import type { Role } from '@/content/constants/roles'
 
 const profileKeyEnv = process.env.NEXT_PUBLIC_PROFILE_ENCRYPTION_KEY
 if (!profileKeyEnv) {
@@ -52,6 +53,7 @@ export type Profile = ProfileContent & {
   subscriptionPlan: string | null
   settingsId?: string | null
   version: number
+  role: Role
 }
 
 type StoredProfileDoc = {
@@ -65,6 +67,7 @@ type StoredProfileDoc = {
   isPaid?: boolean
   subscriptionPlan?: string | null
   settingsId?: string | null
+  role?: string | null
   createdAt: number
   updatedAt: number
 }
@@ -118,6 +121,7 @@ function defaultProfile(userId: string, now = Date.now()): Profile {
     subscriptionPlan: null,
     settingsId: null,
     version: 1,
+    role: 'user',
   }
 }
 
@@ -135,6 +139,7 @@ async function decryptProfile(doc: StoredProfileDoc): Promise<Profile> {
     subscriptionPlan: doc.subscriptionPlan ?? null,
     settingsId: doc.settingsId ?? null,
     version: doc.version ?? 1,
+    role: (doc.role as Role | undefined) ?? 'user',
     ...payload,
   }
 }

@@ -9,6 +9,7 @@ import { Inter, Pinyon_Script, Lora } from 'next/font/google'
 import { getClerkAppearance } from '@/components/theme'
 import MuiAppTheme from '@/components/MuiAppTheme'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import Script from 'next/script'
 
 const pinyon = Pinyon_Script({
@@ -139,6 +140,7 @@ export default function RootLayout({
         </head>
         <body className={cn('antialiased', 'bg-black text-white')}>
           <Analytics />
+          <SpeedInsights />
           <MuiAppTheme>
             <Providers>
               <BackgroundImage

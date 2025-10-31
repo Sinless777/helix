@@ -12,6 +12,9 @@ export type AppConfig = {
             faro: FaroConfig;
         };
     };
+    git: {
+        repoUrl: string;
+    };
 };
 
 const config: AppConfig = {
@@ -33,6 +36,9 @@ const config: AppConfig = {
             },
         },
     },
+    git: {
+        repoUrl: 'https://github.com/Sinless777/helix'
+    }
 };
 
 export default config;

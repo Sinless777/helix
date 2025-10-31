@@ -23,6 +23,7 @@ type StoredProfileDoc = {
   isPaid?: boolean
   subscriptionPlan?: string | null
   settingsId?: Id<'settings'> | null
+  role?: string | null
   createdAt: number
   updatedAt: number
 }
@@ -47,9 +48,10 @@ export async function saveHandler(
     isPaid?: boolean
     subscriptionPlan?: string | null
     settingsId?: string | null
+    role?: string | null
   }
 ) {
-  const { userId, encryptedPayload, iv, version, features, isPaid, subscriptionPlan, settingsId } = args
+  const { userId, encryptedPayload, iv, version, features, isPaid, subscriptionPlan, settingsId, role } = args
   await requireOwnership(ctx, userId)
   const db = (ctx as any).db
   const now = Date.now()
@@ -71,6 +73,10 @@ export async function saveHandler(
     normalizedSettingsId !== undefined
       ? normalizedSettingsId
       : existing?.settingsId ?? undefined
+  const nextRole =
+    role !== undefined && role !== null
+      ? role
+      : existing?.role ?? null
 
   if (!existing) {
     const _id = await db.insert('profiles', {
@@ -82,6 +88,7 @@ export async function saveHandler(
       isPaid: nextIsPaid,
       subscriptionPlan: nextSubscription,
       settingsId: nextSettingsId,
+      role: nextRole,
       createdAt: now,
       updatedAt: now,
     })
@@ -96,8 +103,52 @@ export async function saveHandler(
     isPaid: nextIsPaid,
     subscriptionPlan: nextSubscription,
     settingsId: nextSettingsId,
+    role: nextRole,
     updatedAt: now,
   })
 
   return { _id: existing._id, created: false }
+}
+
+export async function setFeaturesForUser(
+  ctx: MutationCtx,
+  args: { userId: string; features: string[] }
+) {
+  await requireOwnership(ctx, args.userId)
+  const db = (ctx as any).db
+  const now = Date.now()
+
+  const normalized = Array.isArray(args.features)
+    ? args.features.map((feature) => feature?.toString().trim()).filter((feature) => feature && feature.length > 0)
+    : []
+
+  const existing = (await db
+    .query('profiles')
+    .withIndex('by_userId', (q: any) => q.eq('userId', args.userId))
+    .unique()) as StoredProfileDoc | null
+
+  if (!existing) {
+    // Create a minimal profile with features if none exists
+    const _id = await db.insert('profiles', {
+      userId: args.userId,
+      encryptedPayload: '', // or sensible default
+      iv: '', // or sensible default
+      version: DEFAULT_VERSION,
+      features: normalized,
+      isPaid: false,
+      subscriptionPlan: null,
+      settingsId: null,
+      role: 'user',
+      createdAt: now,
+      updatedAt: now,
+    });
+    return { updated: true, created: true, _id };
+  }
+
+  await db.patch(existing._id, {
+    features: normalized,
+    updatedAt: now,
+  });
+
+  return { updated: true, created: false, _id: existing._id };
 }

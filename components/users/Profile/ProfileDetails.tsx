@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import {
   Alert,
@@ -52,6 +52,7 @@ type ProfileBasics = {
   subscriptionPlan?: string | null;
   settingsId?: string | null;
   version?: number | null;
+  role?: string | null;
 };
 
 type UserBasics = {
@@ -218,9 +219,25 @@ export function ProfileDetails({
   const [isSaving, setIsSaving] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const saveEncryptedProfile = useMutation<any>('profile:save');
+  const setProfileFeatures = useMutation<any>('profile:setFeatures');
   const profileKey = process.env.NEXT_PUBLIC_PROFILE_ENCRYPTION_KEY;
 
   const canViewSensitive = isAuthenticated;
+
+  const syncedFeaturesRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!canEdit) return;
+    const available = Array.isArray(profile.features)
+      ? profile.features.map((feature) => feature?.toString().trim()).filter((feature) => feature && feature.length > 0)
+      : [];
+    const key = available.slice().sort().join('|');
+    if (syncedFeaturesRef.current === key) return;
+    syncedFeaturesRef.current = key;
+    setProfileFeatures({ userId: profile.userId, features: available }).catch(() => {
+      // no-op if sync fails; user can retry on next visit
+    });
+  }, [canEdit, profile.features, profile.userId, setProfileFeatures]);
 
   useEffect(() => {
     const next = createFormState(profile);

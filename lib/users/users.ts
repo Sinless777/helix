@@ -12,6 +12,7 @@ export interface UserData {
   createdAt?: string
   profileId?: string
   profile?: Awaited<ReturnType<typeof getProfile>>
+  features?: string[]
 }
 
 /**
@@ -89,6 +90,17 @@ function mapUser(u: any): UserData {
   if (about !== undefined) out.about = about
 
   if (createdAtIso !== undefined) out.createdAt = createdAtIso
+
+  const rawFeatures = (u.publicMetadata?.features ?? u.privateMetadata?.features) as
+    | string
+    | string[]
+    | undefined
+
+  if (Array.isArray(rawFeatures)) {
+    out.features = rawFeatures.map((feature) => String(feature)).filter(Boolean)
+  } else if (typeof rawFeatures === 'string' && rawFeatures.trim().length > 0) {
+    out.features = [rawFeatures.trim()]
+  }
 
   return out
 }

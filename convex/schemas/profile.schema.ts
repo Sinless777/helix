@@ -10,6 +10,7 @@ export default defineTable({
   isPaid: v.optional(v.boolean()),
   subscriptionPlan: v.optional(v.string()),
   settingsId: v.optional(v.id('settings')),
+  role: v.optional(v.string()),
   createdAt: v.number(),
   updatedAt: v.number(),
 }).index('by_userId', ['userId'])

@@ -3,7 +3,7 @@
 
 import { mutation } from '../../_generated/server'
 import { v } from 'convex/values'
-import { saveHandler } from '../../functions/user/profile.funcs'
+import { saveHandler, setFeaturesForUser } from '../../functions/user/profile.funcs'
 
 export { getByUserId } from '../../queries/user/profile.query'
 
@@ -20,5 +20,15 @@ export const save = mutation({
   },
   handler: async (ctx, args) => {
     return await saveHandler(ctx, args)
+  },
+})
+
+export const setFeatures = mutation({
+  args: {
+    userId: v.string(),
+    features: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await setFeaturesForUser(ctx, args)
   },
 })
