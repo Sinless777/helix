@@ -3,7 +3,8 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
-import { Inter, Pinyon_Script, Lora } from 'next/font/google';
+// Removed next/font/google to support offline/CI builds. Fonts fall back to
+// system fonts via CSS variables in HelixFonts.
 import Script from 'next/script';
 import React from 'react';
 
@@ -13,24 +14,7 @@ import { Providers } from '@/components/providers';
 import { getClerkAppearance } from '@/components/theme';
 import { cn } from '@/lib/utils';
 
-const pinyon = Pinyon_Script({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-pinyon',
-  display: 'swap',
-});
-
-const lora = Lora({
-  subsets: ['latin'],
-  variable: '--font-lora',
-  display: 'swap',
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-});
+// Note: If you want local fonts, switch to `next/font/local` with bundled files.
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://helixai.com'),
@@ -106,14 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <ClerkProvider appearance={clerkAppearance}>
-      <html
-        lang="en"
-        className={`${inter.variable} ${lora.variable} ${pinyon.variable} ${
-          mode === 'dark' ? 'dark' : ''
-        }`}
-        style={{ colorScheme: mode }}
-        suppressHydrationWarning
-      >
+      <html lang="en" className={`${mode === 'dark' ? 'dark' : ''}`} style={{ colorScheme: mode }} suppressHydrationWarning>
         <head>
           {/* AdSense Meta Tag */}
           <meta name="google-adsense-account" content="ca-pub-9610840170359196" />
